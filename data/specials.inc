@@ -643,5 +643,8 @@ gSpecials::
     def_special Special_ApplyFallTint
     def_special Special_ClearIntroTint
 	def_special UpdateRelationship 
-	def_special FinalizeCounterpartRelationship
+	def_special Script_IsSelectedMonShiny
+        def_special Script_MakeSelectedMonShiny
+        def_special Script_IsSelectedMonMimikyu
+        def_special FinalizeCounterpartRelationship
 

@@ -1,39 +1,31 @@
 SafariZone_West_Frlg_MapScripts::
-	.byte 0
+    .byte 0
 
-SafariZone_West_EventScript_RestHouseSign::
-	msgbox SafariZone_West_Text_RestHouse, MSGBOX_SIGN
-	end
 
-SafariZone_West_EventScript_LostTeethNotice::
-	msgbox SafariZone_West_Text_PleaseFindWardensLostTeeth, MSGBOX_SIGN
-	end
+SafariZone_West_Frlg_EventScript_KangaskhanMan::
+    lock
+    faceplayer
+    msgbox SafariZone_West_Frlg_Text_KangaskhanMan, MSGBOX_DEFAULT
+    release
+    end
 
-SafariZone_West_EventScript_TrainerTips::
-	msgbox SafariZone_West_Text_SearchForSecretHouse, MSGBOX_SIGN
-	end
 
-SafariZone_West_EventScript_AreaSign::
-	msgbox SafariZone_West_Text_AreaSign, MSGBOX_SIGN
-	end
+SafariZone_West_Frlg_EventScript_CuboneMan::
+    lock
+    faceplayer
+    msgbox SafariZone_West_Frlg_Text_CuboneMan, MSGBOX_DEFAULT
+    release
+    end
 
-SafariZone_West_Text_RestHouse::
-	.string "REST HOUSE$"
 
-SafariZone_West_Text_PleaseFindWardensLostTeeth::
-	.string "REQUEST NOTICE\p"
-	.string "Please find the SAFARI WARDEN's\n"
-	.string "lost GOLD TEETH.\l"
-	.string "They're around here somewhere.\p"
-	.string "Reward offered!\n"
-	.string "Contact: WARDEN$"
+SafariZone_West_Frlg_Text_KangaskhanMan:
+    .string "I was NOT chased by that\n"
+    .string "Kangaskhan.$"
 
-SafariZone_West_Text_SearchForSecretHouse::
-	.string "TRAINER TIPS\p"
-	.string "Zone Exploration Campaign!\n"
-	.string "The Search for the SECRET HOUSE!$"
+SafariZone_West_Frlg_Text_KangaskhanMan2:
+    .string "I made a tactical retreat.$"
 
-SafariZone_West_Text_AreaSign::
-	.string "AREA 3\n"
-	.string "EAST: CENTER AREA$"
-
+SafariZone_West_Frlg_Text_CuboneMan:
+    .string "Cubone looks so cute...\p"
+    .string "Then you remember why it wears\n"
+    .string "the skull, and now you're sad.$"

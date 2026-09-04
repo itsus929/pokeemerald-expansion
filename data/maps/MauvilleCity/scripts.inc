@@ -1,6 +1,51 @@
 MauvilleCity_MapScripts::
-	map_script MAP_SCRIPT_ON_TRANSITION, MauvilleCity_OnTransition
-	.byte 0
+        map_script MAP_SCRIPT_ON_LOAD, MauvilleCity_SetReturnCounterpartGraphics
+        map_script MAP_SCRIPT_ON_TRANSITION, MauvilleCity_OnTransition
+        map_script MAP_SCRIPT_ON_FRAME_TABLE, MauvilleCity_ReturnOnFrame
+        .byte 0
+
+MauvilleCity_ReturnOnFrame:
+        map_script_2 VAR_TEMP_2, 1, MauvilleCity_EventScript_ReturnCounterpartArrival
+        .2byte 0
+
+
+
+@ ============================================================================
+@ RETURN COUNTERPART DYNAMIC GRAPHICS
+@ ============================================================================
+
+MauvilleCity_SetReturnCounterpartGraphics:
+        goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_BRENDAN, MauvilleCity_SetReturnBrendan
+        goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_MAY, MauvilleCity_SetReturnMay
+        goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_LEXY, MauvilleCity_SetReturnLexy
+        goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_JUSTIN, MauvilleCity_SetReturnJustin
+        goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_MAAM, MauvilleCity_SetReturnMaam
+        goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_SIR, MauvilleCity_SetReturnSir
+        end
+
+MauvilleCity_SetReturnBrendan:
+        setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_BRENDAN_NORMAL
+        end
+
+MauvilleCity_SetReturnMay:
+        setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_MAY_NORMAL
+        end
+
+MauvilleCity_SetReturnLexy:
+        setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_LEXY_NORMAL
+        end
+
+MauvilleCity_SetReturnJustin:
+        setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_JUSTIN_NORMAL
+        end
+
+MauvilleCity_SetReturnMaam:
+        setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_MAAM_NORMAL
+        end
+
+MauvilleCity_SetReturnSir:
+        setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_SIR_NORMAL
+        end
 
 MauvilleCity_OnTransition:
 	setflag FLAG_VISITED_MAUVILLE_CITY
@@ -10,7 +55,22 @@ MauvilleCity_OnTransition:
 	clearflag FLAG_MAUVILLE_GYM_BARRIERS_STATE
 	setvar VAR_MAUVILLE_GYM_STATE, 0
 	call_if_set FLAG_GOT_TM_THUNDERBOLT_FROM_WATTSON, MauvilleCity_EventScript_MoveWattsonBackToGym
+        call MauvilleCity_EventScript_ArmReturnCounterpart
 	end
+
+MauvilleCity_EventScript_ArmReturnCounterpart:
+        setvar VAR_TEMP_2, 0
+
+        compare VAR_BROCK_INGREDIENT_QUEST, 11
+        goto_if_ne MauvilleCity_EventScript_ArmReturnCounterpart_End
+
+        goto_if_set FLAG_HIDE_MAUVILLE_RETURN_COUNTERPART, MauvilleCity_EventScript_ArmReturnCounterpart_End
+
+        setvar VAR_TEMP_2, 1
+
+MauvilleCity_EventScript_ArmReturnCounterpart_End:
+        return
+
 
 MauvilleCity_EventScript_MoveWattsonBackToGym::
 	clearflag FLAG_HIDE_MAUVILLE_GYM_WATTSON
@@ -798,3 +858,204 @@ MauvilleCity_Movement_BrockDriverApproach:
     walk_left
     walk_in_place_faster_left
     step_end
+
+@ ============================================================================
+@ COUNTERPART - RETURN FROM HARD ROCK CAFE
+@ ============================================================================
+
+MauvilleCity_EventScript_ReturnCounterpart::
+        goto MauvilleCity_EventScript_ReturnCounterpartArrival
+
+
+MauvilleCity_EventScript_ReturnCounterpartArrival:
+        lockall
+
+        @ Shut off this map-load trigger immediately.
+        setvar VAR_TEMP_2, 0
+
+        applymovement LOCALID_PLAYER, MauvilleCity_Movement_ReturnPlayerFacesCounterpart
+        applymovement LOCALID_MAUVILLE_RETURN_COUNTERPART, MauvilleCity_Movement_ReturnCounterpartFacesPlayer
+        waitmovement 0
+
+        msgbox MauvilleCity_Text_ReturnFinallyBack, MSGBOX_DEFAULT
+
+        @ Recall the exact Cerulean disclosure when available.
+        goto_if_set FLAG_CERULEAN_DISCLOSED_EVERYTHING, MauvilleCity_EventScript_ReturnRecallEverything
+        goto_if_set FLAG_CERULEAN_DISCLOSED_BOOK_ONLY, MauvilleCity_EventScript_ReturnRecallBook
+        goto_if_set FLAG_CERULEAN_DISCLOSED_NOTHING, MauvilleCity_EventScript_ReturnRecallNothing
+
+        @ Old saves have none of those flags, so they land here.
+        goto MauvilleCity_EventScript_ReturnRecallFallback
+
+
+MauvilleCity_EventScript_ReturnRecallEverything:
+        msgbox MauvilleCity_Text_ReturnRecallEverything, MSGBOX_DEFAULT
+        goto MauvilleCity_EventScript_ReturnGoodbye
+
+
+MauvilleCity_EventScript_ReturnRecallBook:
+        msgbox MauvilleCity_Text_ReturnRecallBook, MSGBOX_DEFAULT
+        goto MauvilleCity_EventScript_ReturnGoodbye
+
+
+MauvilleCity_EventScript_ReturnRecallNothing:
+        msgbox MauvilleCity_Text_ReturnRecallNothing, MSGBOX_DEFAULT
+        goto MauvilleCity_EventScript_ReturnGoodbye
+
+
+MauvilleCity_EventScript_ReturnRecallFallback:
+        msgbox MauvilleCity_Text_ReturnRecallFallback, MSGBOX_DEFAULT
+        goto MauvilleCity_EventScript_ReturnGoodbye
+
+
+MauvilleCity_EventScript_ReturnGoodbye:
+        msgbox MauvilleCity_Text_ReturnGramps, MSGBOX_DEFAULT
+
+        closemessage
+
+        applymovement LOCALID_MAUVILLE_RETURN_COUNTERPART, MauvilleCity_Movement_ReturnCounterpartLeaves
+        waitmovement LOCALID_MAUVILLE_RETURN_COUNTERPART
+
+        setflag FLAG_HIDE_MAUVILLE_RETURN_COUNTERPART
+        removeobject LOCALID_MAUVILLE_RETURN_COUNTERPART
+
+        msgbox MauvilleCity_Text_ReturnPlayerReaction, MSGBOX_DEFAULT
+
+        releaseall
+        end
+
+
+MauvilleCity_Movement_ReturnPlayerFacesCounterpart:
+        face_right
+        step_end
+
+
+MauvilleCity_Movement_ReturnCounterpartFacesPlayer:
+        face_left
+        step_end
+
+
+MauvilleCity_Movement_ReturnCounterpartLeaves:
+        walk_down
+        walk_down
+        walk_down
+        walk_down
+        walk_down
+        walk_down
+        step_end
+
+
+MauvilleCity_Text_ReturnFinallyBack:
+        .string "{RIVAL}: Finallyyy, we're back.$"
+
+
+MauvilleCity_Text_ReturnRecallEverything:
+        .string "{RIVAL}: I've been thinking about\n"
+        .string "what you told me in CERULEAN.\p"
+        .string "The book. SAFFRON.\n"
+        .string "Going back in time.\p"
+        .string "All of it.$"
+
+
+MauvilleCity_Text_ReturnRecallBook:
+        .string "{RIVAL}: I've been thinking about\n"
+        .string "that book you told me about\l"
+        .string "in CERULEAN.\p"
+        .string "You were definitely holding\n"
+        .string "something back, by the way.$"
+
+
+MauvilleCity_Text_ReturnRecallNothing:
+        .string "{RIVAL}: I've been thinking about\n"
+        .string "CERULEAN.\p"
+        .string "You really looked me in the face\n"
+        .string "and acted like you had no idea\l"
+        .string "what that librarian meant.\p"
+        .string "I didn't forget.$"
+
+
+MauvilleCity_Text_ReturnRecallFallback:
+        .string "{RIVAL}: I've been thinking about\n"
+        .string "all that weird stuff in CERULEAN.$"
+
+
+MauvilleCity_Text_ReturnGramps:
+        .string "{RIVAL}: It made me realize there's\n"
+        .string "some stuff I need to ask Gramps.\p"
+        .string "Welp. Smell ya later!$"
+
+
+MauvilleCity_Text_ReturnPlayerReaction:
+        .string "{PLAYER}: ...Did they just?\p"
+        .string "There's no way.\p"
+        .string "Guess it runs in the family.$"
+
+@ =============================================================================
+@ BREEDER FAITH - REPEATABLE TRAINING
+@ =============================================================================
+
+MauvilleCity_EventScript_BreederFaith::
+    lock
+    faceplayer
+
+    msgbox MauvilleCity_Text_BreederFaithOffer, MSGBOX_YESNO
+    goto_if_eq VAR_RESULT, NO, MauvilleCity_EventScript_BreederFaithDecline
+
+    trainerbattle_single TRAINER_BREEDER_FAITH_MAUVILLE, MauvilleCity_Text_BreederFaithIntro, MauvilleCity_Text_BreederFaithDefeat
+
+    @ Make Faith immediately battleable again.
+    cleartrainerflag TRAINER_BREEDER_FAITH_MAUVILLE
+
+    @ Normal Lv.24 Breeder payout = ₽960.
+    @ Training bonus brings each victory to ₽1,500 total.
+    addmoney 540
+
+    msgbox MauvilleCity_Text_BreederFaithAfterBattle, MSGBOX_DEFAULT
+    release
+    end
+
+
+MauvilleCity_EventScript_BreederFaithDecline::
+    msgbox MauvilleCity_Text_BreederFaithDecline, MSGBOX_DEFAULT
+    release
+    end
+
+
+MauvilleCity_Text_BreederFaithOffer:
+    .string "FAITH: Let me guess.\p"
+    .string "Joy sent you to Hope.\p"
+    .string "Hope sent you here.\p"
+    .string "{PLAYER}: ...How do you know that?\p"
+    .string "FAITH: They talk.\p"
+    .string "{PLAYER}: Apparently a lot.\p"
+    .string "FAITH: I'm Faith.\p"
+    .string "My AUDINO are ready if you are.\p"
+    .string "Want to train?$"
+
+
+MauvilleCity_Text_BreederFaithIntro:
+    .string "FAITH: Let's see what all the\n"
+    .string "gossip is about.$"
+
+
+MauvilleCity_Text_BreederFaithDefeat:
+    .string "FAITH: Okay. They undersold you.$"
+
+
+MauvilleCity_Text_BreederFaithAfterBattle:
+    .string "FAITH: Not bad at all.\p"
+    .string "{PLAYER}: What exactly have they\n"
+    .string "been saying about me?\p"
+    .string "FAITH: You'll have to ask them.\p"
+    .string "I added a little training bonus to\n"
+    .string "your prize money.\p"
+    .string "Come back whenever you want\n"
+    .string "another round.$"
+
+
+MauvilleCity_Text_BreederFaithDecline:
+    .string "FAITH: That's fine.\p"
+    .string "I'll tell Hope you chickened out.\p"
+    .string "{PLAYER}: FAITH.\p"
+    .string "FAITH: I'm kidding.$"
+

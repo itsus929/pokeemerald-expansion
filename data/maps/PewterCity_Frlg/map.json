@@ -160,6 +160,34 @@
       "script": "NULL",
       "flag": "0",
       "local_id": "LOCALID_PEWTER_DRAGONITE"
+    },
+    {
+      "local_id": "LOCALID_PEWTER_LORELEI",
+      "graphics_id": "OBJ_EVENT_GFX_LORELEI",
+      "x": 34,
+      "y": 18,
+      "elevation": 3,
+      "movement_type": "MOVEMENT_TYPE_FACE_UP",
+      "movement_range_x": 0,
+      "movement_range_y": 0,
+      "trainer_type": "TRAINER_TYPE_NONE",
+      "trainer_sight_or_berry_tree_id": "0",
+      "script": "PewterCity_Frlg_EventScript_LoreleiButter",
+      "flag": "0"
+    },
+    {
+      "local_id": "LOCALID_PEWTER_RETURN_COUNTERPART",
+      "graphics_id": "OBJ_EVENT_GFX_VAR_0",
+      "x": 35,
+      "y": 18,
+      "elevation": 3,
+      "movement_type": "MOVEMENT_TYPE_FACE_LEFT",
+      "movement_range_x": 0,
+      "movement_range_y": 0,
+      "trainer_type": "TRAINER_TYPE_NONE",
+      "trainer_sight_or_berry_tree_id": "0",
+      "script": "PewterCity_Frlg_EventScript_ReturnCounterpart",
+      "flag": "0"
     }
   ],
   "warp_events": [
@@ -249,7 +277,48 @@
       "script": "PewterCity_Frlg_EventScript_CounterpartArrival"
     }
   ],
-  "bg_events": [],
+  "bg_events": [
+    {
+      "type": "sign",
+      "x": 19,
+      "y": 7,
+      "elevation": 0,
+      "player_facing_dir": "BG_EVENT_PLAYER_FACING_ANY",
+      "script": "PewterCity_EventScript_MuseumSign"
+    },
+    {
+      "type": "sign",
+      "x": 39,
+      "y": 19,
+      "elevation": 0,
+      "player_facing_dir": "BG_EVENT_PLAYER_FACING_ANY",
+      "script": "PewterCity_EventScript_PoliceNotice"
+    },
+    {
+      "type": "sign",
+      "x": 11,
+      "y": 16,
+      "elevation": 0,
+      "player_facing_dir": "BG_EVENT_PLAYER_FACING_ANY",
+      "script": "PewterCity_EventScript_GymSign"
+    },
+    {
+      "type": "sign",
+      "x": 20,
+      "y": 30,
+      "elevation": 0,
+      "player_facing_dir": "BG_EVENT_PLAYER_FACING_ANY",
+      "script": "PewterCity_EventScript_TrainerTips"
+    },
+    {
+      "type": "sign",
+      "x": 31,
+      "y": 25,
+      "elevation": 0,
+      "player_facing_dir": "BG_EVENT_PLAYER_FACING_ANY",
+      "script": "PewterCity_EventScript_CitySign"
+    }
+  ],
   "floor_number": 0,
   "region": "REGION_KANTO"
 }

@@ -195,11 +195,43 @@ static void TransferEggMoves(void)
 
     for (i = 0; i < DAYCARE_MON_COUNT; i++)
     {
-        enum Species moveLearnerSpecies = GetBoxMonData(&gSaveBlock1Ptr->daycare.mons[i].mon, MON_DATA_SPECIES);
-        enum Species eggSpecies = GetEggSpecies(moveLearnerSpecies);
+        enum Species moveLearnerSpecies;
+        enum Species eggSpecies;
+        bool8 hasMirrorHerb;
 
         if (!GetBoxMonData(&gSaveBlock1Ptr->daycare.mons[i].mon, MON_DATA_SANITY_HAS_SPECIES))
             continue;
+
+        moveLearnerSpecies = GetBoxMonData(&gSaveBlock1Ptr->daycare.mons[i].mon, MON_DATA_SPECIES);
+        hasMirrorHerb = GetBoxMonData(&gSaveBlock1Ptr->daycare.mons[i].mon, MON_DATA_HELD_ITEM) == ITEM_MIRROR_HERB;
+
+        // Custom Mirror Herb behavior:
+        // A learner holding a Mirror Herb can copy any move known by
+        // another Pokemon in the Day Care, as long as it has room.
+        if (hasMirrorHerb)
+        {
+            for (k = 0; k < DAYCARE_MON_COUNT; k++)
+            {
+                if (k == i || !GetBoxMonData(&gSaveBlock1Ptr->daycare.mons[k].mon, MON_DATA_SANITY_HAS_SPECIES))
+                    continue;
+
+                for (l = 0; l < MAX_MON_MOVES; l++)
+                {
+                    u16 move = GetBoxMonData(&gSaveBlock1Ptr->daycare.mons[k].mon, MON_DATA_MOVE1 + l);
+
+                    if (move == MOVE_NONE)
+                        continue;
+
+                    if (GiveMoveToBoxMon(&gSaveBlock1Ptr->daycare.mons[i].mon, move) == MON_HAS_MAX_MOVES)
+                        break;
+                }
+            }
+
+            continue;
+        }
+
+        // Normal Egg Move transfer behavior for Pokemon without a Mirror Herb.
+        eggSpecies = GetEggSpecies(moveLearnerSpecies);
 
         // Prevent non-baby species from learning incense baby egg moves
         if (P_INCENSE_BREEDING < GEN_9 && eggSpecies != moveLearnerSpecies)
@@ -216,6 +248,7 @@ static void TransferEggMoves(void)
 
         ClearHatchedEggMoves();
         numEggMoves = GetEggMovesBySpecies(eggSpecies, sHatchedEggEggMoves);
+
         for (j = 0; j < numEggMoves; j++)
         {
             // Go through other Daycare mons
@@ -226,10 +259,8 @@ static void TransferEggMoves(void)
                 if (k == i || !GetBoxMonData(&gSaveBlock1Ptr->daycare.mons[k].mon, MON_DATA_SANITY_HAS_SPECIES))
                     continue;
 
-                // Check if you can inherit from them
-                if (GET_BASE_SPECIES_ID(moveTeacherSpecies) != GET_BASE_SPECIES_ID(moveLearnerSpecies)
-                    && (P_EGG_MOVE_TRANSFER < GEN_9 || GetBoxMonData(&gSaveBlock1Ptr->daycare.mons[i].mon, MON_DATA_HELD_ITEM) != ITEM_MIRROR_HERB)
-                )
+                // Normal transfer without Mirror Herb still requires matching base species.
+                if (GET_BASE_SPECIES_ID(moveTeacherSpecies) != GET_BASE_SPECIES_ID(moveLearnerSpecies))
                     continue;
 
                 for (l = 0; l < MAX_MON_MOVES; l++)

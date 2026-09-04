@@ -206,7 +206,7 @@
 #define VAR_BROCK_INGREDIENT_QUEST                       0x40B8 // Brock's post-Wattson mystery ingredient quest
 #define VAR_MT_PYRE_STATE                                0x40B9
 #define VAR_NEW_MAUVILLE_STATE                           0x40BA
-#define VAR_UNUSED_0x40BB                                0x40BB // Unused Var
+#define VAR_MT_MOON_BELIEF                              0x40BB // Player's Mt. Moon belief choice
 #define VAR_BRAVO_TRAINER_BATTLE_TOWER_ON                0x40BC
 #define VAR_JAGGED_PASS_ASH_WEATHER                      0x40BD
 #define VAR_GLASS_WORKSHOP_STATE                         0x40BE
@@ -274,7 +274,7 @@
 #define VAR_WISDOM                                       0x40FC
 #define VAR_PERSPECTIVE                                  0x40FD 
 #define VAR_LIBRARY_BOOK_QUEST                           0x40FE
-#define VAR_SILPH_1F_STATE                          0x40FF // Unused Var
+#define VAR_SILPH_1F_STATE                          0x40FF // Used by restored Silph 1F story state
 
 #define VARS_END                                         0x40FF
 #define VARS_COUNT                  (VARS_END - VARS_START + 1)

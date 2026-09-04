@@ -58,14 +58,34 @@ VerdanturfTown_WandasHouse_EventScript_WandaDontWorry::
 	end
 
 VerdanturfTown_WandasHouse_EventScript_WallysAunt::
-	lock
-	faceplayer
-	goto_if_set FLAG_DEFEATED_WALLY_VICTORY_ROAD, VerdanturfTown_WandasHouse_EventScript_WallysAuntEverGrande
-	goto_if_set FLAG_DEFEATED_LAVARIDGE_GYM, VerdanturfTown_WandasHouse_EventScript_WallysAuntAnythingHappened
-	goto_if_set FLAG_RUSTURF_TUNNEL_OPENED, VerdanturfTown_WandasHouse_EventScript_WallysAuntTunnelOpen
-	msgbox VerdanturfTown_WandasHouse_Text_DaughtersBoyfriendDriven, MSGBOX_DEFAULT
-	release
-	end
+        lock
+        faceplayer
+
+        @ The Ice Stone becomes available only after Rusturf Tunnel is opened.
+        goto_if_unset FLAG_RUSTURF_TUNNEL_OPENED, VerdanturfTown_WandasHouse_EventScript_WallysAuntNormal
+        goto_if_unset FLAG_RECEIVED_WALLYS_AUNT_ICE_STONE, VerdanturfTown_WandasHouse_EventScript_WallysAuntGiveIceStone
+
+VerdanturfTown_WandasHouse_EventScript_WallysAuntNormal::
+        goto_if_set FLAG_DEFEATED_WALLY_VICTORY_ROAD, VerdanturfTown_WandasHouse_EventScript_WallysAuntEverGrande
+        goto_if_set FLAG_DEFEATED_LAVARIDGE_GYM, VerdanturfTown_WandasHouse_EventScript_WallysAuntAnythingHappened
+        goto_if_set FLAG_RUSTURF_TUNNEL_OPENED, VerdanturfTown_WandasHouse_EventScript_WallysAuntTunnelOpen
+        msgbox VerdanturfTown_WandasHouse_Text_DaughtersBoyfriendDriven, MSGBOX_DEFAULT
+        release
+        end
+
+VerdanturfTown_WandasHouse_EventScript_WallysAuntGiveIceStone::
+        msgbox VerdanturfTown_WandasHouse_Text_IceStoneGift, MSGBOX_DEFAULT
+        giveitem ITEM_ICE_STONE, 1
+        goto_if_eq VAR_RESULT, FALSE, VerdanturfTown_WandasHouse_EventScript_WallysAuntIceStoneBagFull
+        setflag FLAG_RECEIVED_WALLYS_AUNT_ICE_STONE
+        msgbox VerdanturfTown_WandasHouse_Text_IceStoneAfter, MSGBOX_DEFAULT
+        release
+        end
+
+VerdanturfTown_WandasHouse_EventScript_WallysAuntIceStoneBagFull::
+        msgbox VerdanturfTown_WandasHouse_Text_IceStoneBagFull, MSGBOX_DEFAULT
+        release
+        end
 
 VerdanturfTown_WandasHouse_EventScript_WallysAuntTunnelOpen::
 	msgbox VerdanturfTown_WandasHouse_Text_DaughtersBoyfriendWasDigging, MSGBOX_DEFAULT
@@ -142,6 +162,26 @@ VerdanturfTown_WandasHouse_Text_CanSeeGirlfriendEveryDay:
 	.string "Thanks to you, I can see my girlfriend\n"
 	.string "every day.\l"
 	.string "Happy? You bet I am!$"
+
+VerdanturfTown_WandasHouse_Text_IceStoneGift:
+        .string "You helped open the tunnel!\p"
+        .string "WANDA and her boyfriend can finally\n"
+        .string "see each other without all that\l"
+        .string "digging.\p"
+        .string "And after everything you've done for\n"
+        .string "WALLY too, I wanted to thank you.\p"
+        .string "Here. Please take this.$"
+
+VerdanturfTown_WandasHouse_Text_IceStoneAfter:
+        .string "It's an ICE STONE.\p"
+        .string "Certain POKéMON can evolve when\n"
+        .string "they're exposed to it.\p"
+        .string "I hope you can put it to good use.$"
+
+VerdanturfTown_WandasHouse_Text_IceStoneBagFull:
+        .string "Oh, your BAG is full.\p"
+        .string "Make some room and come back.\n"
+        .string "I'll hold onto it for you.$"
 
 VerdanturfTown_WandasHouse_Text_DaughtersBoyfriendDriven:
 	.string "My daughter's boyfriend is a very\n"

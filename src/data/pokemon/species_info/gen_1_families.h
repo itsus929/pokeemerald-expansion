@@ -8037,7 +8037,7 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         .teachableLearnset = sGrowlitheTeachableLearnset,
         .eggMoveLearnset = sGrowlitheEggMoveLearnset,
         .formSpeciesIdTable = sGrowlitheFormSpeciesIdTable,
-        .evolutions = EVOLUTION({EVO_ITEM, ITEM_DUSK_STONE, SPECIES_ARCANINE}),
+        .evolutions = EVOLUTION({EVO_LEVEL, 25, SPECIES_ARCANINE}),
     },
 
     [SPECIES_ARCANINE] =
@@ -8170,7 +8170,7 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         .teachableLearnset = sGrowlitheHisuiTeachableLearnset,
         .eggMoveLearnset = sGrowlitheHisuiEggMoveLearnset,
         .formSpeciesIdTable = sGrowlitheFormSpeciesIdTable,
-        .evolutions = EVOLUTION({EVO_ITEM, ITEM_SUN_STONE, SPECIES_ARCANINE_HISUI}),
+        .evolutions = EVOLUTION({EVO_LEVEL, 25, SPECIES_ARCANINE_HISUI}),
     },
 
     [SPECIES_ARCANINE_HISUI] =

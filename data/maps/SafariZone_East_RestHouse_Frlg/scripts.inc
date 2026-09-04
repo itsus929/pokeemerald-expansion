@@ -1,27 +1,44 @@
 SafariZone_East_RestHouse_Frlg_MapScripts::
-	.byte 0
+    .byte 0
 
-SafariZone_East_RestHouse_EventScript_Rocker::
-	msgbox SafariZone_East_Text_CaughtChanseyAllWorthwhile, MSGBOX_NPC
-	end
 
-SafariZone_East_RestHouse_EventScript_Scientist::
-	msgbox SafariZone_East_Text_HowManyDidYouCatch, MSGBOX_NPC
-	end
+SafariZone_East_RestHouse_Frlg_EventScript_Scientist::
+    lock
+    faceplayer
+    msgbox SafariZone_East_RestHouse_Frlg_Text_Scientist, MSGBOX_DEFAULT
+    release
+    end
 
-SafariZone_East_RestHouse_EventScript_BaldingMan::
-	msgbox SafariZone_East_Text_TiredFromAllTheFun, MSGBOX_NPC
-	end
 
-SafariZone_East_Text_HowManyDidYouCatch::
-	.string "How many did you catch?\n"
-	.string "I'm bushed from the effort!$"
+SafariZone_East_RestHouse_Frlg_EventScript_Rocker::
+    lock
+    faceplayer
+    msgbox SafariZone_East_RestHouse_Frlg_Text_Rocker, MSGBOX_DEFAULT
+    release
+    end
 
-SafariZone_East_Text_CaughtChanseyAllWorthwhile::
-	.string "I caught a CHANSEY!\p"
-	.string "That makes this all worthwhile.$"
 
-SafariZone_East_Text_TiredFromAllTheFun::
-	.string "Whew!\n"
-	.string "I'm tired from all the fun!$"
+SafariZone_East_RestHouse_Frlg_EventScript_BaldingMan::
+    lock
+    faceplayer
+    msgbox SafariZone_East_RestHouse_Frlg_Text_BaldingMan, MSGBOX_DEFAULT
+    release
+    end
 
+
+SafariZone_East_RestHouse_Frlg_Text_Scientist:
+    .string "People swear they have\n"
+    .string "special catching tricks.\p"
+    .string "They do not.$"
+
+
+SafariZone_East_RestHouse_Frlg_Text_Rocker:
+    .string "Scyther ran.\n"
+    .string "Pinsir ran.\p"
+    .string "I'm taking this personally.$"
+
+
+SafariZone_East_RestHouse_Frlg_Text_BaldingMan:
+    .string "I threw bait at a Tauros.\p"
+    .string "For a moment, it looked like\n"
+    .string "I was the bait.$"

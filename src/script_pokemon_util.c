@@ -1,4 +1,5 @@
 #include "global.h"
+#include "battle_main.h"
 #include "battle.h"
 #include "battle_gfx_sfx_util.h"
 #include "berry.h"
@@ -19,6 +20,7 @@
 #include "party_menu.h"
 #include "pokedex.h"
 #include "pokemon.h"
+#include "evolution_scene.h"
 #include "pokemon_storage_system.h"
 #include "random.h"
 #include "random_mon_generation.h"
@@ -27,6 +29,7 @@
 #include "string_util.h"
 #include "tv.h"
 #include "wild_encounter.h"
+#include "constants/pokeball.h"
 #include "constants/abilities.h"
 #include "constants/items.h"
 #include "constants/battle_frontier.h"
@@ -617,6 +620,384 @@ void Script_GetChosenMonDefensiveIVs(void)
     ConvertIntToDecimalStringN(gStringVar3, GetMonData(&gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004], MON_DATA_SPDEF_IV), STR_CONV_MODE_LEFT_ALIGN, 3);
 }
 
+
+
+static u32 GetTrainingEVField(u16 choice)
+{
+    switch (choice)
+    {
+    case 0:
+        return MON_DATA_HP_EV;
+    case 1:
+        return MON_DATA_ATK_EV;
+    case 2:
+        return MON_DATA_DEF_EV;
+    case 3:
+        return MON_DATA_SPATK_EV;
+    case 4:
+        return MON_DATA_SPDEF_EV;
+    case 5:
+        return MON_DATA_SPEED_EV;
+    default:
+        return MON_DATA_HP_EV;
+    }
+}
+
+static u32 GetTrainingIVField(u16 choice)
+{
+    switch (choice)
+    {
+    case 0:
+        return MON_DATA_HP_IV;
+    case 1:
+        return MON_DATA_ATK_IV;
+    case 2:
+        return MON_DATA_DEF_IV;
+    case 3:
+        return MON_DATA_SPATK_IV;
+    case 4:
+        return MON_DATA_SPDEF_IV;
+    case 5:
+        return MON_DATA_SPEED_IV;
+    default:
+        return MON_DATA_HP_IV;
+    }
+}
+
+static u32 GetMonTotalEVsForTraining(struct Pokemon *mon)
+{
+    return GetMonData(mon, MON_DATA_HP_EV)
+         + GetMonData(mon, MON_DATA_ATK_EV)
+         + GetMonData(mon, MON_DATA_DEF_EV)
+         + GetMonData(mon, MON_DATA_SPATK_EV)
+         + GetMonData(mon, MON_DATA_SPDEF_EV)
+         + GetMonData(mon, MON_DATA_SPEED_EV);
+}
+
+void Script_CheckSelectedMonEVTraining(void)
+{
+    struct Pokemon *mon;
+    u32 field;
+    u32 current;
+    u32 total;
+
+    if (gSpecialVar_0x8004 >= PARTY_SIZE || gSpecialVar_0x8005 > 5)
+    {
+        gSpecialVar_Result = 3;
+        return;
+    }
+
+    mon = &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004];
+    field = GetTrainingEVField(gSpecialVar_0x8005);
+    current = GetMonData(mon, field);
+    total = GetMonTotalEVsForTraining(mon);
+
+    if (current >= 252)
+        gSpecialVar_Result = 1;
+    else if (total >= 510)
+        gSpecialVar_Result = 2;
+    else
+        gSpecialVar_Result = 0;
+}
+
+void Script_TrainSelectedMonEV(void)
+{
+    struct Pokemon *mon;
+    u32 field;
+    u32 current;
+    u32 total;
+    u32 available;
+    u32 needed;
+    u32 newValue;
+
+    if (gSpecialVar_0x8004 >= PARTY_SIZE || gSpecialVar_0x8005 > 5)
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    mon = &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004];
+    field = GetTrainingEVField(gSpecialVar_0x8005);
+
+    current = GetMonData(mon, field);
+    total = GetMonTotalEVsForTraining(mon);
+
+    if (current >= 252 || total >= 510)
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    available = 510 - total;
+    needed = 252 - current;
+
+    if (needed > available)
+        needed = available;
+
+    newValue = current + needed;
+
+    Script_RequestEffects(SCREFF_V1 | SCREFF_SAVE);
+    SetMonData(mon, field, &newValue);
+    CalculateMonStats(mon);
+
+    gSpecialVar_Result = TRUE;
+}
+
+void Script_CheckSelectedMonIVTraining(void)
+{
+    struct Pokemon *mon;
+    u32 field;
+
+    if (gSpecialVar_0x8004 >= PARTY_SIZE || gSpecialVar_0x8005 > 5)
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    mon = &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004];
+    field = GetTrainingIVField(gSpecialVar_0x8005);
+
+    gSpecialVar_Result = GetMonData(mon, field) < 31;
+}
+
+void Script_TrainSelectedMonIV(void)
+{
+    struct Pokemon *mon;
+    u32 field;
+    u32 value = 31;
+
+    if (gSpecialVar_0x8004 >= PARTY_SIZE || gSpecialVar_0x8005 > 5)
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    mon = &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004];
+    field = GetTrainingIVField(gSpecialVar_0x8005);
+
+    Script_RequestEffects(SCREFF_V1 | SCREFF_SAVE);
+    SetMonData(mon, field, &value);
+    CalculateMonStats(mon);
+
+    gSpecialVar_Result = TRUE;
+}
+
+void Script_IsSelectedMonShiny(void)
+{
+    if (gSpecialVar_0x8004 >= PARTY_SIZE)
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    gSpecialVar_Result = GetMonData(
+        &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004],
+        MON_DATA_IS_SHINY
+    );
+}
+
+void Script_IsSelectedMonMimikyu(void)
+{
+    if (gSpecialVar_0x8004 >= PARTY_SIZE)
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    gSpecialVar_Result =
+        GetMonData(
+            &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004],
+            MON_DATA_SPECIES
+        ) == SPECIES_MIMIKYU;
+}
+
+
+void Script_MakeSelectedMonShiny(void)
+{
+    u32 isShiny = TRUE;
+
+    if (gSpecialVar_0x8004 >= PARTY_SIZE)
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    Script_RequestEffects(SCREFF_V1 | SCREFF_SAVE);
+
+    SetMonData(
+        &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004],
+        MON_DATA_IS_SHINY,
+        &isShiny
+    );
+
+    gSpecialVar_Result = TRUE;
+}
+
+
+static bool32 IsSelectedEggForCustomization(void)
+{
+    if (gSpecialVar_0x8004 >= PARTY_SIZE)
+        return FALSE;
+
+    return GetMonData(
+        &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004],
+        MON_DATA_IS_EGG
+    );
+}
+
+void Script_CanCustomizeSelectedEggGender(void)
+{
+    struct Pokemon *mon;
+    enum Species species;
+    u32 malePersonality;
+    u32 femalePersonality;
+    u32 maleGender;
+    u32 femaleGender;
+
+    if (!IsSelectedEggForCustomization())
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    mon = &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004];
+    species = GetMonData(mon, MON_DATA_SPECIES);
+
+    malePersonality = GeneratePersonalityForGender(MON_MALE, species);
+    femalePersonality = GeneratePersonalityForGender(MON_FEMALE, species);
+
+    maleGender = GetGenderFromSpeciesAndPersonality(species, malePersonality);
+    femaleGender = GetGenderFromSpeciesAndPersonality(species, femalePersonality);
+
+    gSpecialVar_Result =
+        (maleGender == MON_MALE && femaleGender == MON_FEMALE);
+}
+
+void Script_SetSelectedEggNature(void)
+{
+    struct Pokemon *mon;
+    enum Species species;
+    u32 personality;
+    u32 oldGender;
+    u32 newGender;
+    u32 isShiny;
+    u32 nature = gSpecialVar_0x8005;
+
+    if (!IsSelectedEggForCustomization() || nature >= NUM_NATURES)
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    mon = &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004];
+    species = GetMonData(mon, MON_DATA_SPECIES);
+    personality = GetMonData(mon, MON_DATA_PERSONALITY);
+    oldGender = GetGenderFromSpeciesAndPersonality(species, personality);
+    isShiny = GetMonData(mon, MON_DATA_IS_SHINY);
+
+    ModifyPersonalityForNature(&personality, nature);
+
+    newGender = GetGenderFromSpeciesAndPersonality(species, personality);
+
+    // Nature and gender both depend on personality.
+    // If changing Nature crossed the species' gender threshold,
+    // rebuild a personality for the original gender first.
+    if (oldGender != MON_GENDERLESS && newGender != oldGender)
+    {
+        personality = GeneratePersonalityForGender(oldGender, species);
+        ModifyPersonalityForNature(&personality, nature);
+
+        if (GetGenderFromSpeciesAndPersonality(species, personality) != oldGender)
+        {
+            gSpecialVar_Result = FALSE;
+            return;
+        }
+    }
+
+    Script_RequestEffects(SCREFF_V1 | SCREFF_SAVE);
+
+    SetMonData(mon, MON_DATA_PERSONALITY, &personality);
+
+    // Preserve the Egg's existing shiny state even though personality changed.
+    SetMonData(mon, MON_DATA_IS_SHINY, &isShiny);
+
+    gSpecialVar_Result = TRUE;
+}
+
+void Script_SetSelectedEggGender(void)
+{
+    struct Pokemon *mon;
+    enum Species species;
+    u32 oldPersonality;
+    u32 newPersonality;
+    u32 oldNature;
+    u32 requestedGender;
+    u32 isShiny;
+
+    if (!IsSelectedEggForCustomization() || gSpecialVar_0x8005 > 1)
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    mon = &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004];
+    species = GetMonData(mon, MON_DATA_SPECIES);
+
+    requestedGender =
+        (gSpecialVar_0x8005 == 0) ? MON_MALE : MON_FEMALE;
+
+    oldPersonality = GetMonData(mon, MON_DATA_PERSONALITY);
+    oldNature = GetNatureFromPersonality(oldPersonality);
+    isShiny = GetMonData(mon, MON_DATA_IS_SHINY);
+
+    newPersonality = GeneratePersonalityForGender(requestedGender, species);
+    ModifyPersonalityForNature(&newPersonality, oldNature);
+
+    if (GetGenderFromSpeciesAndPersonality(species, newPersonality) != requestedGender)
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    Script_RequestEffects(SCREFF_V1 | SCREFF_SAVE);
+
+    SetMonData(mon, MON_DATA_PERSONALITY, &newPersonality);
+
+    // Preserve shiny state across the personality rewrite.
+    SetMonData(mon, MON_DATA_IS_SHINY, &isShiny);
+
+    gSpecialVar_Result = TRUE;
+}
+
+void Script_SetSelectedEggBall(void)
+{
+    struct Pokemon *mon;
+    u32 ball = gSpecialVar_0x8005;
+
+    if (!IsSelectedEggForCustomization())
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    if (ball < BALL_POKE
+     || ball >= POKEBALL_COUNT
+     || ball == BALL_MASTER
+     || ball == BALL_CHERISH
+     || ball == BALL_STRANGE)
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    mon = &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004];
+
+    Script_RequestEffects(SCREFF_V1 | SCREFF_SAVE);
+    SetMonData(mon, MON_DATA_POKEBALL, &ball);
+
+    gSpecialVar_Result = TRUE;
+}
+
 void Script_SetStatus1(struct ScriptContext *ctx)
 {
     u32 status1 = VarGet(ScriptReadHalfword(ctx));
@@ -662,4 +1043,88 @@ void Script_GiveRandomBerry(struct ScriptContext *ctx)
     enum BerryId hiBerry = ScriptReadByte(ctx);
 
     gSpecialVar_Result = BerryTypeToItemId(RandomUniform(RNG_RANDOM_BERRY, loBerry, hiBerry));
+}
+
+/*
+ * Fallarbor Evolution Specialist
+ *
+ * Allows a selected party Pokemon to undergo an evolution whose
+ * primary evolution method is EVO_TRADE.
+ */
+
+void Script_CheckSelectedMonTradeEvolution(void)
+{
+    u32 partyIndex = gSpecialVar_0x8004;
+    struct Pokemon *mon;
+    enum Species targetSpecies;
+
+    if (partyIndex >= gPartiesCount[B_TRAINER_PLAYER])
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    mon = &gParties[B_TRAINER_PLAYER][partyIndex];
+
+    if (GetMonData(mon, MON_DATA_IS_EGG))
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    targetSpecies = GetEvolutionTargetSpecies(
+        mon,
+        EVO_MODE_TRADE,
+        ITEM_NONE,
+        NULL,
+        NULL,
+        CHECK_EVO
+    );
+
+    gSpecialVar_Result = (targetSpecies != SPECIES_NONE);
+}
+
+void Script_EvolveSelectedMonByTrade(void)
+{
+    u32 partyIndex = gSpecialVar_0x8004;
+    struct Pokemon *mon;
+    enum Species targetSpecies;
+    bool32 canStopEvo = TRUE;
+
+    if (partyIndex >= gPartiesCount[B_TRAINER_PLAYER])
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    mon = &gParties[B_TRAINER_PLAYER][partyIndex];
+
+    targetSpecies = GetEvolutionTargetSpecies(
+        mon,
+        EVO_MODE_TRADE,
+        ITEM_NONE,
+        NULL,
+        &canStopEvo,
+        CHECK_EVO
+    );
+
+    if (targetSpecies == SPECIES_NONE)
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    GetEvolutionTargetSpecies(
+        mon,
+        EVO_MODE_TRADE,
+        ITEM_NONE,
+        NULL,
+        &canStopEvo,
+        DO_EVO
+    );
+
+    gSpecialVar_Result = TRUE;
+    gCB2_AfterEvolution = CB2_ReturnToFieldContinueScript;
+    BeginEvolutionScene(mon, targetSpecies, canStopEvo, partyIndex);
+    ScriptContext_Stop();
 }

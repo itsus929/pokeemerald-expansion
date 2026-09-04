@@ -467,6 +467,9 @@ enum
 
     OBJ_EVENT_GFX_XIE,
     OBJ_EVENT_GFX_DRAGONITE,
+    OBJ_EVENT_GFX_ALAKAZAM,
+    OBJ_EVENT_GFX_CLEFAIRY_MOON,
+    OBJ_EVENT_GFX_IMPIDIMP_MOON,
 
     NUM_OBJ_EVENT_GFX,
 };
@@ -632,6 +635,9 @@ enum
 #define OBJ_EVENT_PAL_TAG_MAAM                    0x1137
 #define OBJ_EVENT_PAL_TAG_BUTTERFLY               0x1138
 #define OBJ_EVENT_PAL_TAG_DRAGONITE               0x113D
+#define OBJ_EVENT_PAL_TAG_ALAKAZAM                0x113E
+#define OBJ_EVENT_PAL_TAG_CLEFAIRY_MOON           0x113F
+#define OBJ_EVENT_PAL_TAG_IMPIDIMP_MOON           0x1140
 #define OBJ_EVENT_PAL_TAG_SOL                       0x113B
 #define OBJ_EVENT_PAL_TAG_XIE                       0x113C
 #define OBJ_EVENT_PAL_TAG_BOOKS                   0x1139

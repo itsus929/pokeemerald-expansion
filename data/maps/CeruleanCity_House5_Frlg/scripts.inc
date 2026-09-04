@@ -253,6 +253,9 @@ CeruleanCity_House5_Frlg_EventScript_IngredientQuest:
 
 
 CeruleanCity_House5_Frlg_EventScript_DiscloseEverything:
+    clearflag FLAG_CERULEAN_DISCLOSED_BOOK_ONLY
+    clearflag FLAG_CERULEAN_DISCLOSED_NOTHING
+    setflag FLAG_CERULEAN_DISCLOSED_EVERYTHING
     addvar VAR_COMPASSION, 1
     addvar VAR_CURIOSITY, 1
 
@@ -266,6 +269,9 @@ CeruleanCity_House5_Frlg_EventScript_DiscloseEverything:
 
 
 CeruleanCity_House5_Frlg_EventScript_DiscloseBook:
+    clearflag FLAG_CERULEAN_DISCLOSED_EVERYTHING
+    clearflag FLAG_CERULEAN_DISCLOSED_NOTHING
+    setflag FLAG_CERULEAN_DISCLOSED_BOOK_ONLY
     addvar VAR_PERSPECTIVE, 1
 
     msgbox CeruleanCity_House5_Frlg_Text_DiscloseBook, MSGBOX_DEFAULT
@@ -278,6 +284,9 @@ CeruleanCity_House5_Frlg_EventScript_DiscloseBook:
 
 
 CeruleanCity_House5_Frlg_EventScript_Deflect:
+    clearflag FLAG_CERULEAN_DISCLOSED_EVERYTHING
+    clearflag FLAG_CERULEAN_DISCLOSED_BOOK_ONLY
+    setflag FLAG_CERULEAN_DISCLOSED_NOTHING
     addvar VAR_INDEPENDENCE, 1
 
     msgbox CeruleanCity_House5_Frlg_Text_Deflect, MSGBOX_DEFAULT

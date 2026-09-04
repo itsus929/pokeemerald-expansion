@@ -3,8 +3,42 @@ MeteorFalls_1F_1R_MapScripts::
 	.byte 0
 
 MeteorFalls_1F_1R_OnLoad:
-	call_if_set FLAG_SYS_GAME_CLEAR, MeteorFalls_1F_1R_EventScript_OpenStevensCave
-	end
+    call MeteorFalls_1F_1R_SetCounterpartGraphics
+    call_if_set FLAG_SYS_GAME_CLEAR, MeteorFalls_1F_1R_EventScript_OpenStevensCave
+    end
+
+MeteorFalls_1F_1R_SetCounterpartGraphics:
+    goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_BRENDAN, MeteorFalls_1F_1R_SetBrendan
+    goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_MAY, MeteorFalls_1F_1R_SetMay
+    goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_LEXY, MeteorFalls_1F_1R_SetLexy
+    goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_JUSTIN, MeteorFalls_1F_1R_SetJustin
+    goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_MAAM, MeteorFalls_1F_1R_SetMaam
+    goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_SIR, MeteorFalls_1F_1R_SetSir
+    return
+
+MeteorFalls_1F_1R_SetBrendan:
+    setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_BRENDAN_NORMAL
+    return
+
+MeteorFalls_1F_1R_SetMay:
+    setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_MAY_NORMAL
+    return
+
+MeteorFalls_1F_1R_SetLexy:
+    setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_LEXY_NORMAL
+    return
+
+MeteorFalls_1F_1R_SetJustin:
+    setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_JUSTIN_NORMAL
+    return
+
+MeteorFalls_1F_1R_SetMaam:
+    setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_MAAM_NORMAL
+    return
+
+MeteorFalls_1F_1R_SetSir:
+    setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_SIR_NORMAL
+    return
 
 MeteorFalls_1F_1R_EventScript_OpenStevensCave::
 	setmetatile 4, 1, METATILE_MeteorFalls_CaveEntrance_Top, TRUE
@@ -52,6 +86,55 @@ MeteorFalls_1F_1R_EventScript_MagmaStealsMeteoriteScene::
 	applymovement LOCALID_METEOR_FALLS_MAGMA_GRUNT_1, Common_Movement_WalkInPlaceFasterLeft
 	applymovement LOCALID_METEOR_FALLS_MAGMA_GRUNT_2, Common_Movement_WalkInPlaceFasterLeft
 	waitmovement 0
+        delay 20
+        delay 20
+        special SpawnCameraObject
+        applymovement LOCALID_CAMERA, MeteorFalls_1F_1R_Movement_CameraPanDown
+        waitmovement 0
+        applymovement LOCALID_METEOR_FALLS_MAGMA_GRUNT_1, Common_Movement_WalkInPlaceFasterDown
+        applymovement LOCALID_METEOR_FALLS_MAGMA_GRUNT_2, Common_Movement_WalkInPlaceFasterDown
+        applymovement LOCALID_METEOR_FALLS_ARCHIE, Common_Movement_WalkInPlaceFasterDown
+        waitmovement 0
+        msgbox MeteorFalls_1F_1R_Text_GiovanniEnough, MSGBOX_DEFAULT
+        closemessage
+
+        msgbox MeteorFalls_1F_1R_Text_MagmaWhoAreYou, MSGBOX_DEFAULT
+        closemessage
+
+        msgbox MeteorFalls_1F_1R_Text_GiovanniObserve, MSGBOX_DEFAULT
+        closemessage
+
+        msgbox MeteorFalls_1F_1R_Text_ArchieExcuseMe, MSGBOX_DEFAULT
+        closemessage
+
+        msgbox MeteorFalls_1F_1R_Text_GiovanniBothOfYou, MSGBOX_DEFAULT
+        closemessage
+
+        applymovement LOCALID_METEOR_FALLS_GIOVANNI, Common_Movement_WalkInPlaceFasterRight
+        applymovement 10, Common_Movement_WalkInPlaceFasterLeft
+        waitmovement 0
+        msgbox MeteorFalls_1F_1R_Text_GiovanniCozmo, MSGBOX_DEFAULT
+        closemessage
+
+        msgbox MeteorFalls_1F_1R_Text_CozmoCavern, MSGBOX_DEFAULT
+        closemessage
+
+        msgbox MeteorFalls_1F_1R_Text_GiovanniMtMoon, MSGBOX_DEFAULT
+        closemessage
+
+        msgbox MeteorFalls_1F_1R_Text_CozmoMtMoon, MSGBOX_DEFAULT
+        closemessage
+
+        msgbox MeteorFalls_1F_1R_Text_GiovanniNotHere, MSGBOX_DEFAULT
+        closemessage
+        delay 20
+        applymovement LOCALID_CAMERA, MeteorFalls_1F_1R_Movement_CameraPanUp
+        waitmovement 0
+        special RemoveCameraObject
+        applymovement LOCALID_METEOR_FALLS_MAGMA_GRUNT_1, Common_Movement_WalkInPlaceFasterLeft
+        applymovement LOCALID_METEOR_FALLS_MAGMA_GRUNT_2, Common_Movement_WalkInPlaceFasterLeft
+        applymovement LOCALID_METEOR_FALLS_GIOVANNI, Common_Movement_WalkInPlaceFasterUp
+        waitmovement 0
 	msgbox MeteorFalls_1F_1R_Text_BeSeeingYouTeamAqua, MSGBOX_DEFAULT
 	closemessage
 	applymovement LOCALID_PLAYER, MeteorFalls_1F_1R_Movement_PushPlayerOutOfWay
@@ -83,6 +166,40 @@ MeteorFalls_1F_1R_EventScript_MagmaStealsMeteoriteScene::
 	removeobject LOCALID_METEOR_FALLS_ARCHIE
 	removeobject LOCALID_METEOR_FALLS_AQUA_GRUNT_1
 	removeobject LOCALID_METEOR_FALLS_AQUA_GRUNT_2
+        special SpawnCameraObject
+        applymovement LOCALID_CAMERA, MeteorFalls_1F_1R_Movement_CameraPanDown
+        waitmovement 0
+
+        applymovement LOCALID_PLAYER, Common_Movement_WalkInPlaceFasterDown
+        applymovement LOCALID_METEOR_FALLS_GIOVANNI, Common_Movement_WalkInPlaceFasterUp
+        waitmovement 0
+
+        msgbox MeteorFalls_1F_1R_Text_PlayerHowKnow, MSGBOX_DEFAULT
+        closemessage
+
+        msgbox MeteorFalls_1F_1R_Text_GiovanniBeenThere, MSGBOX_DEFAULT
+        closemessage
+
+        msgbox MeteorFalls_1F_1R_Text_GiovanniCallAlakazam, MSGBOX_DEFAULT
+        closemessage
+
+        addobject LOCALID_METEOR_FALLS_ALAKAZAM
+        playmoncry SPECIES_ALAKAZAM, CRY_MODE_NORMAL
+        waitmoncry
+        delay 20
+
+        msgbox MeteorFalls_1F_1R_Text_GiovanniTeleport, MSGBOX_DEFAULT
+        closemessage
+
+        delay 12
+        removeobject LOCALID_METEOR_FALLS_GIOVANNI
+        removeobject LOCALID_METEOR_FALLS_ALAKAZAM
+        delay 20
+
+        applymovement LOCALID_CAMERA, MeteorFalls_1F_1R_Movement_CameraPanUp
+        waitmovement 0
+        special RemoveCameraObject
+
 	setflag FLAG_HIDE_ROUTE_112_TEAM_MAGMA
 	setflag FLAG_MET_ARCHIE_METEOR_FALLS
 	setflag FLAG_HIDE_FALLARBOR_TOWN_BATTLE_TENT_SCOTT
@@ -247,46 +364,35 @@ MeteorFalls_1F_1R_Text_HoldItRightThereMagma:
 	.string "You're badly mistaken if you think you\n"
 	.string "can have your way with the world!$"
 
+
 MeteorFalls_1F_1R_Text_BeSeeingYouTeamAqua:
-	.string "Hehehe!\n"
-	.string "Even TEAM AQUA joins us!\p"
-	.string "But it's too much trouble to deal with\n"
-	.string "you all…\p"
-	.string "Heh, it doesn't matter!\p"
-	.string "We've got the METEORITE, so off to\n"
-	.string "MT. CHIMNEY we go!\p"
-	.string "Hehehe! Be seeing you, you TEAM\n"
-	.string "AQUA dingbats!$"
+        .string "MAGMA GRUNT: Whatever.\p"
+        .string "We've got the METEORITE.\p"
+        .string "We're going to MT. CHIMNEY.$"
+
 
 MeteorFalls_1F_1R_Text_ArchieSeenYouBefore:
-	.string "ARCHIE: Didn't I see you before?\n"
-	.string "At SLATEPORT's MUSEUM?\p"
-	.string "Ah, so your name is {PLAYER}.\p"
-	.string "At the time, I thought you were one\n"
-	.string "of TEAM MAGMA's goons.\p"
-	.string "Humph…\n"
-	.string "You're one odd kid.\p"
-	.string "TEAM MAGMA is a dangerous group of\n"
-	.string "total fanatics.\p"
-	.string "They engage in destruction, claiming\n"
-	.string "to expand the land mass.\p"
-	.string "They are the rivals to us,\n"
-	.string "the sea-loving TEAM AQUA!$"
+        .string "ARCHIE: ...\p"
+        .string "You again. From SLATEPORT.\p"
+        .string "You certainly have a habit of\n"
+        .string "appearing at interesting times.$"
+
 
 MeteorFalls_1F_1R_Text_BossWeShouldChaseMagma:
-	.string "BOSS, we should give chase to\n"
-	.string "TEAM MAGMA…$"
+        .string "AQUA GRUNT: Boss!\p"
+        .string "TEAM MAGMA is getting away!$"
+
 
 MeteorFalls_1F_1R_Text_ArchieYesNoTellingWhatMagmaWillDo:
-	.string "ARCHIE: Yes, yes, we must!\n"
-	.string "We've got to hurry.\p"
-	.string "There's no telling what TEAM MAGMA\n"
-	.string "will do at MT. CHIMNEY!$"
+        .string "ARCHIE: I can see that.\p"
+        .string "We're going after them.$"
+
 
 MeteorFalls_1F_1R_Text_ArchieFarewell:
-	.string "ARCHIE: {PLAYER}, you should keep\n"
-	.string "an eye out for TEAM MAGMA, too.\p"
-	.string "Farewell!$"
+        .string "ARCHIE: {PLAYER}.\p"
+        .string "They're headed for MT. CHIMNEY.\p"
+        .string "Do what you will with that\n"
+        .string "information.$"
 
 MeteorFalls_1F_1R_Text_MeetProfCozmo:
 	.string "I… I'm COZMO…\n"
@@ -304,6 +410,298 @@ MeteorFalls_1F_1R_Text_MeetProfCozmo:
 	.string "METEORITE at MT. CHIMNEY?$"
 
 MeteorFalls_1F_1R_Text_WhatsTeamMagmaDoingAtMtChimney:
-	.string "PROF. COZMO: But that TEAM MAGMA…\p"
-	.string "What are they going to do with that\n"
-	.string "METEORITE at MT. CHIMNEY?$"
+        .string "COZMO: Mt... Moon?\p"
+        .string "I've never heard of such a place.\p"
+        .string "And yet...\p"
+        .string "He said it like he'd been there\n"
+        .string "before.\p"
+        .string "What exactly is beyond this cave?$"
+
+MeteorFalls_1F_1R_Text_GiovanniEnough:
+        .string "GIOVANNI: Enough.$"
+
+
+MeteorFalls_1F_1R_Text_MagmaWhoAreYou:
+        .string "MAGMA GRUNT: Who are you?$"
+
+MeteorFalls_1F_1R_Text_GiovanniObserve:
+        .string "GIOVANNI: Merely an observer.\p"
+        .string "Though there has been remarkably\n"
+        .string "little worth observing.\p"
+        .string "You frightened a scientist, stole a\n"
+        .string "stone, and alerted your opposition.$"
+
+MeteorFalls_1F_1R_Text_ArchieExcuseMe:
+        .string "ARCHIE: Excuse me?$"
+
+MeteorFalls_1F_1R_Text_GiovanniBothOfYou:
+        .string "GIOVANNI: I was speaking to both\n"
+        .string "of you.$"
+
+
+MeteorFalls_1F_1R_Text_GiovanniCozmo:
+        .string "GIOVANNI: Professor.\p"
+        .string "Your readings.\n"
+        .string "Were they limited to this chamber?$"
+
+MeteorFalls_1F_1R_Text_CozmoCavern:
+        .string "COZMO: N-no.\p"
+        .string "There's another cavern nearby.\p"
+        .string "That's actually what's strange.\n"
+        .string "It isn't in any of my records.$"
+
+MeteorFalls_1F_1R_Text_GiovanniMtMoon:
+        .string "GIOVANNI: ...\p"
+        .string "Mt. Moon.$"
+
+MeteorFalls_1F_1R_Text_CozmoMtMoon:
+        .string "COZMO: Mt. Moon?\p"
+        .string "I've never heard of such a place.$"
+
+MeteorFalls_1F_1R_Text_GiovanniNotHere:
+        .string "GIOVANNI: No.\p"
+        .string "You wouldn't have.$"
+
+
+MeteorFalls_1F_1R_Movement_CameraPanDown:
+        walk_down
+        walk_down
+        walk_down
+        walk_down
+        walk_down
+        step_end
+
+MeteorFalls_1F_1R_Movement_CameraPanUp:
+        walk_up
+        walk_up
+        walk_up
+        walk_up
+        walk_up
+        step_end
+
+
+MeteorFalls_1F_1R_Text_PlayerHowKnow:
+        .string "{PLAYER}: How did you know what\n"
+        .string "that cave was called?$"
+
+MeteorFalls_1F_1R_Text_GiovanniBeenThere:
+        .string "GIOVANNI: Because I've been there.\p"
+        .string "Just not here.$"
+
+MeteorFalls_1F_1R_Text_GiovanniCallAlakazam:
+        .string "GIOVANNI: Alakazam.$"
+
+MeteorFalls_1F_1R_Text_GiovanniTeleport:
+        .string "GIOVANNI: Teleport.$"
+
+@ ============================================================================
+@ MT. MOON RETURN - COUNTERPART
+@ ============================================================================
+
+MeteorFalls_1F_1R_EventScript_MtMoonReturnCounterpart::
+    goto_if_set FLAG_HIDE_METEOR_FALLS_COUNTERPART, MeteorFalls_1F_1R_EventScript_MtMoonReturnCounterpart_End
+    goto_if_unset FLAG_HIDE_MT_MOON_TWIN, MeteorFalls_1F_1R_EventScript_MtMoonReturnCounterpart_End
+
+    lockall
+
+    applymovement LOCALID_PLAYER, Common_Movement_FaceRight
+    applymovement LOCALID_METEOR_FALLS_COUNTERPART, Common_Movement_FaceLeft
+    waitmovement 0
+
+    msgbox MeteorFalls_1F_1R_Text_CounterpartThereYouAre, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_PlayerWhereWereYou, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_CounterpartAround, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_PlayerAroundWhere, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_CounterpartGramps, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_PlayerProfessorOak, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_CounterpartYes, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_PlayerEveryoneKnowsOak, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_CounterpartFriendlinessFamily, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_PlayerNotAnswer, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_CounterpartNotQuestion, MSGBOX_DEFAULT
+
+    msgbox MeteorFalls_1F_1R_Text_CounterpartBook, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_PlayerYouReadIt, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_CounterpartYeah, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_PlayerAnd, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_CounterpartAnnihilape, MSGBOX_DEFAULT
+
+    goto_if_set FLAG_HIDE_HOME_MOM, MeteorFalls_1F_1R_EventScript_CounterpartSawXie
+
+MeteorFalls_1F_1R_EventScript_CounterpartSawSol:
+    msgbox MeteorFalls_1F_1R_Text_CounterpartSawSol, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_PlayerYouKnowSol, MSGBOX_DEFAULT
+    goto MeteorFalls_1F_1R_EventScript_CounterpartKnowsTwin
+
+MeteorFalls_1F_1R_EventScript_CounterpartSawXie:
+    msgbox MeteorFalls_1F_1R_Text_CounterpartSawXie, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_PlayerYouKnowXie, MSGBOX_DEFAULT
+
+MeteorFalls_1F_1R_EventScript_CounterpartKnowsTwin:
+    msgbox MeteorFalls_1F_1R_Text_CounterpartKnowTwin, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_PlayerHow, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_CounterpartFriendlinessAgain, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_PlayerStop, MSGBOX_DEFAULT
+
+    msgbox MeteorFalls_1F_1R_Text_CounterpartMagma, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_PlayerRight, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_CounterpartDistracted, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_PlayerMountain, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_CounterpartCave, MSGBOX_DEFAULT
+    msgbox MeteorFalls_1F_1R_Text_PlayerNotHelping, MSGBOX_DEFAULT
+
+    applymovement LOCALID_METEOR_FALLS_COUNTERPART, MeteorFalls_1F_1R_Movement_CounterpartExit
+    waitmovement 0
+
+    setflag FLAG_HIDE_METEOR_FALLS_COUNTERPART
+    removeobject LOCALID_METEOR_FALLS_COUNTERPART
+
+    releaseall
+    end
+
+MeteorFalls_1F_1R_EventScript_MtMoonReturnCounterpart_End:
+    end
+
+
+MeteorFalls_1F_1R_EventScript_CounterpartTalk::
+    lock
+    faceplayer
+    msgbox MeteorFalls_1F_1R_Text_CounterpartWaiting, MSGBOX_DEFAULT
+    release
+    end
+
+
+MeteorFalls_1F_1R_Text_CounterpartThereYouAre:
+    .string "{RIVAL}: There you are.$"
+
+MeteorFalls_1F_1R_Text_PlayerWhereWereYou:
+    .string "{PLAYER}: Where were you?$"
+
+MeteorFalls_1F_1R_Text_CounterpartAround:
+    .string "{RIVAL}: Around.$"
+
+MeteorFalls_1F_1R_Text_PlayerAroundWhere:
+    .string "{PLAYER}: Around where?$"
+
+MeteorFalls_1F_1R_Text_CounterpartGramps:
+    .string "{RIVAL}: Here. I talked to gramps.$"
+
+MeteorFalls_1F_1R_Text_PlayerProfessorOak:
+    .string "{PLAYER}: Professor Oak?$"
+
+MeteorFalls_1F_1R_Text_CounterpartYes:
+    .string "{RIVAL}: ...Yes?$"
+
+MeteorFalls_1F_1R_Text_PlayerEveryoneKnowsOak:
+    .string "{PLAYER}: Why does everyone know\n"
+    .string "him?$"
+
+MeteorFalls_1F_1R_Text_CounterpartFriendlinessFamily:
+    .string "{RIVAL}: Friendliness runs in the\n"
+    .string "family?$"
+
+MeteorFalls_1F_1R_Text_PlayerNotAnswer:
+    .string "{PLAYER}: That's not an answer.$"
+
+MeteorFalls_1F_1R_Text_CounterpartNotQuestion:
+    .string "{RIVAL}: Wasn't really a question.$"
+
+MeteorFalls_1F_1R_Text_CounterpartBook:
+    .string "{RIVAL}: I read a weird book too.$"
+
+MeteorFalls_1F_1R_Text_PlayerYouReadIt:
+    .string "{PLAYER}: You READ it?$"
+
+MeteorFalls_1F_1R_Text_CounterpartYeah:
+    .string "{RIVAL}: Yeah.$"
+
+MeteorFalls_1F_1R_Text_PlayerAnd:
+    .string "{PLAYER}: And?$"
+
+MeteorFalls_1F_1R_Text_CounterpartAnnihilape:
+    .string "{RIVAL}: Got an Annihilape.\p"
+    .string "Pretty cool, right?$"
+
+MeteorFalls_1F_1R_Text_CounterpartSawSol:
+    .string "{RIVAL}: I saw Sol in there too.$"
+
+MeteorFalls_1F_1R_Text_PlayerYouKnowSol:
+    .string "{PLAYER}: You know Sol?!$"
+
+MeteorFalls_1F_1R_Text_CounterpartSawXie:
+    .string "{RIVAL}: I saw Xie in there too.$"
+
+MeteorFalls_1F_1R_Text_PlayerYouKnowXie:
+    .string "{PLAYER}: You know Xie?!$"
+
+MeteorFalls_1F_1R_Text_CounterpartKnowTwin:
+    .string "{RIVAL}: ...Yes?$"
+
+MeteorFalls_1F_1R_Text_PlayerHow:
+    .string "{PLAYER}: How?!$"
+
+MeteorFalls_1F_1R_Text_CounterpartFriendlinessAgain:
+    .string "{RIVAL}: Friendliness?$"
+
+MeteorFalls_1F_1R_Text_PlayerStop:
+    .string "{PLAYER}: Stop.$"
+
+MeteorFalls_1F_1R_Text_CounterpartMagma:
+    .string "{RIVAL}: Anyway...\p"
+    .string "Weren't those Magma people\n"
+    .string "headed for Mt. Chimney?$"
+
+MeteorFalls_1F_1R_Text_PlayerRight:
+    .string "{PLAYER}: ...Right.$"
+
+MeteorFalls_1F_1R_Text_CounterpartDistracted:
+    .string "{RIVAL}: You got distracted.$"
+
+MeteorFalls_1F_1R_Text_PlayerMountain:
+    .string "{PLAYER}: I found an entire\n"
+    .string "mountain!$"
+
+MeteorFalls_1F_1R_Text_CounterpartCave:
+    .string "{RIVAL}: It's a cave.$"
+
+MeteorFalls_1F_1R_Text_PlayerNotHelping:
+    .string "{PLAYER}: Not helping.$"
+
+MeteorFalls_1F_1R_Text_CounterpartWaiting:
+    .string "{RIVAL}: You planning on going\n"
+    .string "back in?$"
+
+
+
+MeteorFalls_1F_1R_Movement_CounterpartExit:
+    walk_down
+    walk_left
+    walk_left
+    walk_left
+    walk_left
+    walk_left
+    walk_left
+    walk_down
+    walk_left
+    walk_left
+    walk_left
+    walk_left
+    walk_left
+    walk_left
+    walk_left
+    walk_left
+    step_end
+
+
+@ ============================================================================
+@ MT. MOON SIGN
+@ ============================================================================
+
+MeteorFalls_1F_1R_EventScript_MtMoonSign::
+    msgbox MeteorFalls_1F_1R_Text_MtMoonSign, MSGBOX_SIGN
+    end
+
+MeteorFalls_1F_1R_Text_MtMoonSign:
+    .string "MT. MOON\p"
+    .string "A mystical mountain where\n"
+    .string "moonlight gathers.$"

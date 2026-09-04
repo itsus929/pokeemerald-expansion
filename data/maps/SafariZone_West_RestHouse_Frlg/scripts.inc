@@ -1,37 +1,44 @@
 SafariZone_West_RestHouse_Frlg_MapScripts::
-	.byte 0
+    .byte 0
 
-SafariZone_West_RestHouse_EventScript_Man::
-	msgbox SafariZone_West_Text_BaitMakesMonStickAround, MSGBOX_NPC
-	end
 
-SafariZone_West_RestHouse_EventScript_Scientist::
-	msgbox SafariZone_West_Text_RocksMakeMonRunButEasierCatch, MSGBOX_NPC
-	end
+SafariZone_West_RestHouse_Frlg_EventScript_Scientist::
+    lock
+    faceplayer
+    msgbox SafariZone_West_RestHouse_Frlg_Text_Scientist, MSGBOX_DEFAULT
+    release
+    end
 
-SafariZone_West_RestHouse_EventScript_CooltrainerF::
-	msgbox SafariZone_West_Text_HikedLotsDidntSeeMonIWanted, MSGBOX_NPC
-	end
 
-SafariZone_West_Text_KogaPatrolsSafariEverySoOften::
-	.string "The SAFARI ZONE's huge, wouldn't\n"
-	.string "you say?\p"
-	.string "FUCHSIA's GYM LEADER, KOGA, \n"
-	.string "patrols the grounds every so often.\p"
-	.string "Thanks to him, we can play here\n"
-	.string "knowing that we're safe.$"
+SafariZone_West_RestHouse_Frlg_EventScript_Gentleman::
+    lock
+    faceplayer
+    msgbox SafariZone_West_RestHouse_Frlg_Text_Gentleman, MSGBOX_DEFAULT
+    release
+    end
 
-SafariZone_West_Text_RocksMakeMonRunButEasierCatch::
-	.string "Tossing ROCKS at POKéMON might\n"
-	.string "make them run, but they'll be\l"
-	.string "easier to catch.$"
 
-SafariZone_West_Text_BaitMakesMonStickAround::
-	.string "Using BAIT will make POKéMON more\n"
-	.string "likely to stick around if they get\l"
-	.string "busy eating.$"
+SafariZone_West_RestHouse_Frlg_EventScript_Cooltrainer::
+    lock
+    faceplayer
+    msgbox SafariZone_West_RestHouse_Frlg_Text_Cooltrainer, MSGBOX_DEFAULT
+    release
+    end
 
-SafariZone_West_Text_HikedLotsDidntSeeMonIWanted::
-	.string "I hiked a lot, but I didn't see any\n"
-	.string "POKéMON I wanted.$"
 
+SafariZone_West_RestHouse_Frlg_Text_Scientist:
+    .string "I came here to observe\n"
+    .string "Pokemon behavior.\p"
+    .string "Mostly, they observe me run.$"
+
+
+SafariZone_West_RestHouse_Frlg_Text_Gentleman:
+    .string "A Kangaskhan stared at me.\p"
+    .string "I decided we both needed\n"
+    .string "some space.$"
+
+
+SafariZone_West_RestHouse_Frlg_Text_Cooltrainer:
+    .string "Cubone is adorable.\p"
+    .string "I refuse to think any harder\n"
+    .string "about that statement.$"

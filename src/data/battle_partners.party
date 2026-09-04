@@ -49,16 +49,62 @@ Class: Pkmn Trainer 1
 Pic: Brendan
 Gender: Male
 Music: Male
-AI: Basic Trainer
+AI: Check Bad Move / Try To Faint
 
 Marshtomp
-Level: 18
+Adamant Nature
+Level: 31
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Water Pulse
+- Bulldoze
+- Rock Slide
+- Protect
 
 Porygon
-Level: 17
+Modest Nature
+Level: 30
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Psybeam
+- Shock Wave
+- Recover
+- Icy Wind
 
 Sentret
-Level: 17
+Jolly Nature
+Level: 29
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Helping Hand
+- Quick Attack
+- Brick Break
+- Protect
+
+Solosis
+Modest Nature
+Level: 30
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Psyshock
+- Energy Ball
+- Light Screen
+- Protect
+
+Gastrodon
+Calm Nature
+Level: 31
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Muddy Water
+- Earth Power
+- Recover
+- Protect
+
+Annihilape
+Adamant Nature
+Level: 31
+IVs: 24 HP / 24 Atk / 24 Def / 24 SpA / 24 SpD / 24 Spe
+Shiny: Yes
+- Rage Fist
+- Brick Break
+- Rock Tomb
+- Protect
 
 
 === PARTNER_MAY ===
@@ -67,16 +113,62 @@ Class: Pkmn Trainer 1
 Pic: May
 Gender: Female
 Music: Female
-AI: Basic Trainer
+AI: Check Bad Move / Try To Faint
 
 Combusken
-Level: 18
+Adamant Nature
+Level: 31
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Flame Charge
+- Double Kick
+- Rock Tomb
+- Protect
 
 Sunflora
-Level: 17
+Modest Nature
+Level: 30
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Giga Drain
+- Sunny Day
+- Helping Hand
+- Protect
 
 Feebas
-Level: 17
+Calm Nature
+Level: 29
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Icy Wind
+- Water Pulse
+- Confuse Ray
+- Protect
+
+Solrock
+Adamant Nature
+Level: 30
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Rock Slide
+- Zen Headbutt
+- Will-O-Wisp
+- Protect
+
+Clefable
+Bold Nature
+Level: 31
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Moonblast
+- Helping Hand
+- Thunder Wave
+- Protect
+
+Annihilape
+Adamant Nature
+Level: 31
+IVs: 24 HP / 24 Atk / 24 Def / 24 SpA / 24 SpD / 24 Spe
+Shiny: Yes
+- Rage Fist
+- Brick Break
+- Rock Tomb
+- Protect
 
 
 === PARTNER_HIIRO ===
@@ -85,16 +177,62 @@ Class: Pkmn Trainer 1
 Pic: Brendan
 Gender: Male
 Music: Male
-AI: Basic Trainer
+AI: Check Bad Move / Try To Faint
 
 Haunter
-Level: 18
+Timid Nature
+Level: 31
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Shadow Ball
+- Sludge Bomb
+- Will-O-Wisp
+- Protect
 
 Frogadier
-Level: 17
+Timid Nature
+Level: 30
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Water Pulse
+- Icy Wind
+- Aerial Ace
+- Protect
 
 Vibrava
-Level: 17
+Jolly Nature
+Level: 30
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Bulldoze
+- Dragon Breath
+- Rock Slide
+- Protect
+
+Umbreon
+Calm Nature
+Level: 31
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Snarl
+- Helping Hand
+- Confuse Ray
+- Protect
+
+Froslass
+Timid Nature
+Level: 31
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Icy Wind
+- Shadow Ball
+- Thunder Wave
+- Protect
+
+Annihilape
+Adamant Nature
+Level: 31
+IVs: 24 HP / 24 Atk / 24 Def / 24 SpA / 24 SpD / 24 Spe
+Shiny: Yes
+- Rage Fist
+- Brick Break
+- Rock Tomb
+- Protect
 
 
 === PARTNER_CELESTE ===
@@ -103,16 +241,62 @@ Class: Pkmn Trainer 1
 Pic: May
 Gender: Female
 Music: Female
-AI: Basic Trainer
+AI: Check Bad Move / Try To Faint
 
-Eevee
-Level: 18
+Jolteon
+Timid Nature
+Level: 31
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Discharge
+- Shock Wave
+- Thunder Wave
+- Helping Hand
 
 Flaaffy
-Level: 17
+Modest Nature
+Level: 30
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Electro Ball
+- Power Gem
+- Light Screen
+- Protect
 
 Quilava
-Level: 17
+Timid Nature
+Level: 30
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Flame Charge
+- Swift
+- Will-O-Wisp
+- Protect
+
+Mienshao
+Jolly Nature
+Level: 31
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Drain Punch
+- Fake Out
+- Rock Tomb
+- Protect
+
+Lopunny
+Jolly Nature
+Level: 30
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Fake Out
+- Helping Hand
+- Quick Attack
+- Protect
+
+Annihilape
+Adamant Nature
+Level: 31
+IVs: 24 HP / 24 Atk / 24 Def / 24 SpA / 24 SpD / 24 Spe
+Shiny: Yes
+- Rage Fist
+- Brick Break
+- Rock Tomb
+- Protect
 
 
 === PARTNER_ASTER ===
@@ -121,16 +305,62 @@ Class: Pkmn Trainer 1
 Pic: Wally
 Gender: Male
 Music: Male
-AI: Basic Trainer
+AI: Check Bad Move / Try To Faint
 
-Tyrogue
-Level: 18
+Hitmonlee
+Adamant Nature
+Level: 31
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Brick Break
+- Rock Tomb
+- Fake Out
+- Protect
 
 Pikachu
-Level: 17
+Timid Nature
+Level: 30
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Discharge
+- Electro Ball
+- Thunder Wave
+- Protect
 
 Croconaw
-Level: 17
+Adamant Nature
+Level: 30
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Aqua Jet
+- Ice Fang
+- Crunch
+- Protect
+
+Forretress
+Impish Nature
+Level: 31
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Bug Bite
+- Rock Slide
+- Light Screen
+- Protect
+
+Heracross
+Adamant Nature
+Level: 31
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Brick Break
+- Aerial Ace
+- Rock Tomb
+- Protect
+
+Annihilape
+Adamant Nature
+Level: 31
+IVs: 24 HP / 24 Atk / 24 Def / 24 SpA / 24 SpD / 24 Spe
+Shiny: Yes
+- Rage Fist
+- Brick Break
+- Rock Tomb
+- Protect
 
 
 === PARTNER_ALECIYA ===
@@ -139,16 +369,62 @@ Class: Pkmn Trainer 1
 Pic: May
 Gender: Female
 Music: Female
-AI: Basic Trainer
+AI: Check Bad Move / Try To Faint
 
 Hatenna
-Level: 18
+Modest Nature
+Level: 30
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Psybeam
+- Dazzling Gleam
+- Life Dew
+- Protect
 
 Emolga
-Level: 17
+Timid Nature
+Level: 31
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Discharge
+- Air Slash
+- Encore
+- Protect
 
 Floragato
-Level: 17
+Jolly Nature
+Level: 31
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Seed Bomb
+- U-turn
+- Quick Attack
+- Protect
+
+Plusle
+Timid Nature
+Level: 30
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Discharge
+- Helping Hand
+- Encore
+- Protect
+
+Minun
+Timid Nature
+Level: 30
+IVs: 20 HP / 20 Atk / 20 Def / 20 SpA / 20 SpD / 20 Spe
+- Discharge
+- Helping Hand
+- Thunder Wave
+- Protect
+
+Annihilape
+Adamant Nature
+Level: 31
+IVs: 24 HP / 24 Atk / 24 Def / 24 SpA / 24 SpD / 24 Spe
+Shiny: Yes
+- Rage Fist
+- Brick Break
+- Rock Tomb
+- Protect
 
 
 === PARTNER_XIE ===

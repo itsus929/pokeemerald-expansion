@@ -686,6 +686,17 @@ gStdScripts_End::
     .include "data/maps/SilphCo_3F_Frlg/scripts.inc"
     .include "data/maps/SilphCo_4F_Frlg/scripts.inc"
     .include "data/maps/SilphCo_5F_Frlg/scripts.inc"
+
+@ ===== Safari Zone enabled for Emerald custom Kanto =====
+    .include "data/maps/SafariZone_Center_Frlg/scripts.inc"
+    .include "data/maps/SafariZone_East_Frlg/scripts.inc"
+    .include "data/maps/SafariZone_North_Frlg/scripts.inc"
+    .include "data/maps/SafariZone_West_Frlg/scripts.inc"
+    .include "data/maps/SafariZone_Center_RestHouse_Frlg/scripts.inc"
+    .include "data/maps/SafariZone_East_RestHouse_Frlg/scripts.inc"
+    .include "data/maps/SafariZone_North_RestHouse_Frlg/scripts.inc"
+    .include "data/maps/SafariZone_West_RestHouse_Frlg/scripts.inc"
+    .include "data/maps/SafariZone_SecretHouse_Frlg/scripts.inc"
     .include "data/maps/VermilionCity_Frlg/scripts.inc"
     .include "data/maps/VermilionCity_Gym_Frlg/scripts.inc"
     .include "data/maps/VermilionCity_House1_Frlg/scripts.inc"
@@ -709,6 +720,11 @@ gStdScripts_End::
 @ Viridian Forest enabled for Emerald
     .include "data/maps/ViridianForest_Frlg/scripts.inc"
 
+@ ===== Mt. Moon enabled for Emerald custom Kanto =====
+    .include "data/maps/MtMoon_1F_Frlg/scripts.inc"
+    .include "data/maps/MtMoon_B1F_Frlg/scripts.inc"
+    .include "data/maps/MtMoon_B2F_Frlg/scripts.inc"
+
 .if IS_FRLG
 
 @ FRLG scripts
@@ -717,9 +733,6 @@ gStdScripts_End::
 	.include "data/maps/RecordCorner_Frlg/scripts.inc"
 	.include "data/maps/BattleColosseum_4P_Frlg/scripts.inc"
 	.include "data/maps/UnionRoom_Frlg/scripts.inc"
-	.include "data/maps/MtMoon_1F_Frlg/scripts.inc"
-	.include "data/maps/MtMoon_B1F_Frlg/scripts.inc"
-	.include "data/maps/MtMoon_B2F_Frlg/scripts.inc"
 	.include "data/maps/SSAnne_Exterior_Frlg/scripts.inc"
 	.include "data/maps/SSAnne_1F_Corridor_Frlg/scripts.inc"
 	.include "data/maps/SSAnne_2F_Corridor_Frlg/scripts.inc"
@@ -1800,3 +1813,8 @@ PewterCity_PokemonCenter_2F_Frlg_MapScripts::
 	.include "data/maps/OOSS/scripts.inc"
 
 	.include "data/maps/MistysHouse/scripts.inc"
+
+	.include "data/scripts/emerald_training_center.inc"
+   .include "data/scripts/shiny_specialist.inc"
+
+.include "data/maps/EmberSpa_Frlg/scripts.inc"

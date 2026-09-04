@@ -1,54 +1,58 @@
 SafariZone_SecretHouse_Frlg_MapScripts::
-	.byte 0
+    .byte 0
 
-SafariZone_SecretHouse_EventScript_Attendant::
-	lock
-	faceplayer
-	goto_if_set FLAG_GOT_HM03, SafariZone_SecretHouse_EventScript_ExplainSurf
-	msgbox SafariZone_SecretHouse_Text_CongratsYouveWon
-	checkitemspace ITEM_HM03
-	goto_if_eq VAR_RESULT, FALSE, SafariZone_SecretHouse_EventScript_NoRoomForHM03
-	giveitem_msg SafariZone_SecretHouse_Text_ReceivedHM03FromAttendant, ITEM_HM03
-	msgbox SafariZone_SecretHouse_Text_ExplainSurf
-	setflag FLAG_GOT_HM03
-	release
-	end
 
-SafariZone_SecretHouse_EventScript_NoRoomForHM03::
-	msgbox SafariZone_SecretHouse_Text_DontHaveRoomForPrize
-	release
-	end
+SafariZone_SecretHouse_Frlg_EventScript_Attendant::
+    lock
+    faceplayer
 
-SafariZone_SecretHouse_EventScript_ExplainSurf::
-	msgbox SafariZone_SecretHouse_Text_ExplainSurf
-	release
-	end
+    goto_if_set FLAG_RECEIVED_SAFARI_SECRET_HOUSE_REWARD, SafariZone_SecretHouse_Frlg_EventScript_AlreadyReceived
 
-SafariZone_SecretHouse_Text_CongratsYouveWon::
-	.string "Ah! Finally!\p"
-	.string "You're the first person to reach\n"
-	.string "the SECRET HOUSE!\p"
-	.string "Although I made a campaign\n"
-	.string "for our grand opening,\p"
-	.string "I was getting worried that no one\n"
-	.string "would win our campaign prize.\p"
-	.string "Congratulations!\n"
-	.string "You have won!$"
+    msgbox SafariZone_SecretHouse_Frlg_Text_Congratulations, MSGBOX_DEFAULT
 
-SafariZone_SecretHouse_Text_ReceivedHM03FromAttendant::
-	.string "{PLAYER} received HM03\n"
-	.string "from the attendant!$"
+    giveitem ITEM_ABILITY_CAPSULE
+    goto_if_eq VAR_RESULT, FALSE, SafariZone_SecretHouse_Frlg_EventScript_BagFull
 
-SafariZone_SecretHouse_Text_ExplainSurf::
-	.string "HM03 is SURF.\p"
-	.string "POKéMON will be able to ferry you\n"
-	.string "across water using it.\p"
-	.string "And, this HM isn't disposable, so\n"
-	.string "you can use it over and over.\p"
-	.string "You're super lucky for winning this\n"
-	.string "fabulous prize!$"
+    setflag FLAG_RECEIVED_SAFARI_SECRET_HOUSE_REWARD
 
-SafariZone_SecretHouse_Text_DontHaveRoomForPrize::
-	.string "You don't have room for this\n"
-	.string "fabulous prize!$"
+    msgbox SafariZone_SecretHouse_Frlg_Text_ExplainCapsule, MSGBOX_DEFAULT
+    release
+    end
 
+
+SafariZone_SecretHouse_Frlg_EventScript_BagFull::
+    msgbox SafariZone_SecretHouse_Frlg_Text_BagFull, MSGBOX_DEFAULT
+    release
+    end
+
+
+SafariZone_SecretHouse_Frlg_EventScript_AlreadyReceived::
+    msgbox SafariZone_SecretHouse_Frlg_Text_AlreadyReceived, MSGBOX_DEFAULT
+    release
+    end
+
+
+SafariZone_SecretHouse_Frlg_Text_Congratulations:
+    .string "You actually made it!\p"
+    .string "Most people turn around long\n"
+    .string "before they find this place.\p"
+    .string "You earned something special.$"
+
+
+SafariZone_SecretHouse_Frlg_Text_ExplainCapsule:
+    .string "That's an Ability Capsule.\p"
+    .string "It can change a Pokemon's\n"
+    .string "Ability.\p"
+    .string "Use it wisely!$"
+
+
+SafariZone_SecretHouse_Frlg_Text_BagFull:
+    .string "Oh! Your Bag is full.\p"
+    .string "Make some room and come back.\n"
+    .string "I'll hold onto your prize.$"
+
+
+SafariZone_SecretHouse_Frlg_Text_AlreadyReceived:
+    .string "Enjoy that Ability Capsule!\p"
+    .string "And hey...\n"
+    .string "you found the Secret House.$"

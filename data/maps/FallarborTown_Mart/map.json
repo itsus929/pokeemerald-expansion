@@ -3,7 +3,6 @@
   "name": "FallarborTown_Mart",
   "layout": "LAYOUT_MART",
   "music": "MUS_POKE_MART",
-  "region": "REGION_HOENN",
   "region_map_section": "MAPSEC_FALLARBOR_TOWN",
   "requires_flash": false,
   "weather": "WEATHER_NONE",
@@ -19,7 +18,7 @@
       "local_id": "LOCALID_FALLARBOR_MART_CLERK",
       "graphics_id": "OBJ_EVENT_GFX_MART_EMPLOYEE",
       "x": 1,
-      "y": 3,
+      "y": 2,
       "elevation": 3,
       "movement_type": "MOVEMENT_TYPE_FACE_RIGHT",
       "movement_range_x": 0,
@@ -31,15 +30,15 @@
     },
     {
       "graphics_id": "OBJ_EVENT_GFX_WOMAN_2",
-      "x": 5,
+      "x": 0,
       "y": 3,
       "elevation": 3,
-      "movement_type": "MOVEMENT_TYPE_WANDER_AROUND",
-      "movement_range_x": 1,
-      "movement_range_y": 1,
+      "movement_type": "MOVEMENT_TYPE_FACE_DOWN",
+      "movement_range_x": 0,
+      "movement_range_y": 0,
       "trainer_type": "TRAINER_TYPE_NONE",
       "trainer_sight_or_berry_tree_id": "0",
-      "script": "FallarborTown_Mart_EventScript_Woman",
+      "script": "ShinySpecialist_EventScript",
       "flag": "0"
     },
     {
@@ -99,5 +98,6 @@
     }
   ],
   "coord_events": [],
-  "bg_events": []
+  "bg_events": [],
+  "region": "REGION_HOENN"
 }

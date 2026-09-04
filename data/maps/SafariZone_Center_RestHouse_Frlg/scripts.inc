@@ -1,19 +1,31 @@
 SafariZone_Center_RestHouse_Frlg_MapScripts::
-	.byte 0
+    .byte 0
 
-SafariZone_Center_RestHouse_EventScript_Sara::
-	msgbox SafariZone_Center_Text_WhereDidErikGo, MSGBOX_NPC
-	end
 
-SafariZone_Center_RestHouse_EventScript_Scientist::
-	msgbox SafariZone_Center_Text_CatchingMonsAsGifts, MSGBOX_NPC
-	end
+SafariZone_Center_RestHouse_Frlg_EventScript_Scientist::
+    lock
+    faceplayer
+    msgbox SafariZone_Center_RestHouse_Frlg_Text_Scientist, MSGBOX_DEFAULT
+    release
+    end
 
-SafariZone_Center_Text_WhereDidErikGo::
-	.string "SARA: Where did my boyfriend,\n"
-	.string "ERIK, go?$"
 
-SafariZone_Center_Text_CatchingMonsAsGifts::
-	.string "I'm catching POKéMON to take home\n"
-	.string "as gifts.$"
+SafariZone_Center_RestHouse_Frlg_EventScript_Woman::
+    lock
+    faceplayer
+    msgbox SafariZone_Center_RestHouse_Frlg_Text_Woman, MSGBOX_DEFAULT
+    release
+    end
 
+
+SafariZone_Center_RestHouse_Frlg_Text_Scientist:
+    .string "I've recorded every\n"
+    .string "encounter today.\p"
+    .string "My conclusion?\n"
+    .string "I have terrible luck.$"
+
+
+SafariZone_Center_RestHouse_Frlg_Text_Woman:
+    .string "I came in here to rest.\p"
+    .string "Now I'm deciding if I\n"
+    .string "actually want to go back out.$"

@@ -1,6 +1,11 @@
 PewterCity_Frlg_MapScripts::
     map_script MAP_SCRIPT_ON_LOAD, PewterCity_Frlg_SetCounterpartGraphics
+    map_script MAP_SCRIPT_ON_FRAME_TABLE, PewterCity_Frlg_OnFrame
     .byte 0
+
+PewterCity_Frlg_OnFrame:
+    map_script_2 VAR_BROCK_INGREDIENT_QUEST, 9, PewterCity_Frlg_EventScript_LoreleiButter
+    .2byte 0
 
 PewterCity_Frlg_SetCounterpartGraphics:
     goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_BRENDAN, PewterCity_Frlg_SetBrendan
@@ -36,6 +41,29 @@ PewterCity_Frlg_SetSir:
     goto PewterCity_Frlg_FinishMapLoad
 
 PewterCity_Frlg_FinishMapLoad:
+    compare VAR_BROCK_INGREDIENT_QUEST, 9
+    goto_if_eq PewterCity_Frlg_LoadButterScene
+
+    @ Lorelei and the return counterpart only exist for the state-9 finale.
+    removeobject LOCALID_PEWTER_LORELEI
+    removeobject LOCALID_PEWTER_RETURN_COUNTERPART
+    end
+
+
+PewterCity_Frlg_LoadButterScene:
+    @ Make absolutely sure the two older counterpart copies are gone.
+    setflag FLAG_HIDE_PEWTER_COUNTERPART
+    setflag FLAG_HIDE_PEWTER_LANCE_COUNTERPART
+    removeobject LOCALID_PEWTER_COUNTERPART
+    removeobject LOCALID_PEWTER_LANCE_COUNTERPART
+
+    @ Lorelei is already facing Lance.
+    setobjectxyperm LOCALID_PEWTER_LORELEI, 34, 18
+    setobjectmovementtype LOCALID_PEWTER_LORELEI, MOVEMENT_TYPE_FACE_UP
+
+    @ Rival has received the less-accurate version of the old man's warp.
+    setobjectxyperm LOCALID_PEWTER_RETURN_COUNTERPART, 35, 18
+    setobjectmovementtype LOCALID_PEWTER_RETURN_COUNTERPART, MOVEMENT_TYPE_FACE_LEFT
     end
 
 
@@ -581,3 +609,359 @@ PewterCity_Frlg_Movement_DragoniteFaceEast:
     face_right
     step_end
 
+
+
+@ ============================================================================
+@ FUCHSIA RETURN / LORELEI'S SUSPICIOUS BUTTER OPERATION
+@
+@ STATE 9  = returned from Fuchsia, need Lorelei's butter
+@ STATE 10 = Lorelei gave Brock's butter
+@ ============================================================================
+
+
+PewterCity_Frlg_EventScript_FuchsiaReturnArrival::
+    lockall
+
+    delay 20
+
+    @ Player realizes the old man had... mixed accuracy.
+    applymovement LOCALID_PLAYER, PewterCity_Frlg_Movement_ReturnPlayerLooksAtRival
+    applymovement LOCALID_PEWTER_RETURN_COUNTERPART, PewterCity_Frlg_Movement_ReturnRivalLooksAtPlayer
+    waitmovement 0
+
+    msgbox PewterCity_Frlg_Text_ReturnFlowers, MSGBOX_DEFAULT
+
+    releaseall
+    end
+
+
+PewterCity_Frlg_EventScript_ReturnCounterpart::
+    lock
+    faceplayer
+
+    compare VAR_BROCK_INGREDIENT_QUEST, 9
+    goto_if_eq PewterCity_Frlg_EventScript_ReturnCounterpart_State9
+
+    msgbox PewterCity_Frlg_Text_ReturnCounterpartFallback, MSGBOX_DEFAULT
+    release
+    end
+
+
+PewterCity_Frlg_EventScript_ReturnCounterpart_State9:
+    msgbox PewterCity_Frlg_Text_ReturnCounterpartState9, MSGBOX_DEFAULT
+    release
+    end
+
+
+@ ============================================================================
+@ TALKING TO LORELEI STARTS THE BUTTER HANDOFF
+@ ============================================================================
+
+PewterCity_Frlg_EventScript_LoreleiButter::
+    lockall
+
+    compare VAR_BROCK_INGREDIENT_QUEST, 9
+    goto_if_eq PewterCity_Frlg_EventScript_LoreleiButter_FirstTime
+
+    compare VAR_BROCK_INGREDIENT_QUEST, 10
+    goto_if_eq PewterCity_Frlg_EventScript_LoreleiButter_RideAgain
+
+    goto PewterCity_Frlg_EventScript_LoreleiButter_NotReady
+
+
+PewterCity_Frlg_EventScript_LoreleiButter_FirstTime:
+
+    @ Let the player land facing the screen while they witness the deal.
+    applymovement LOCALID_PLAYER, PewterCity_Frlg_Movement_PlayerFacesScreen
+    waitmovement LOCALID_PLAYER
+
+    @ Lorelei and Lance begin facing one another.
+    @ Player is directly below Lorelei and counterpart is beside her.
+    msgbox PewterCity_Frlg_Text_ButterDeal1, MSGBOX_DEFAULT
+    msgbox PewterCity_Frlg_Text_ButterDeal2, MSGBOX_DEFAULT
+
+    @ Player finally interrupts.
+    applymovement LOCALID_PLAYER, PewterCity_Frlg_Movement_PlayerFacesLorelei
+    applymovement LOCALID_PEWTER_LORELEI, PewterCity_Frlg_Movement_LoreleiFacesPlayer
+    applymovement LOCALID_PEWTER_LANCE, PewterCity_Frlg_Movement_LanceFacesPlayer
+    applymovement LOCALID_PEWTER_RETURN_COUNTERPART, PewterCity_Frlg_Movement_CounterpartFacesPlayer
+    waitmovement 0
+
+    msgbox PewterCity_Frlg_Text_ButterPlayerInterrupts, MSGBOX_DEFAULT
+    msgbox PewterCity_Frlg_Text_ButterBrockReveal, MSGBOX_DEFAULT
+
+    @ Narrative handoff only.
+    setvar VAR_BROCK_INGREDIENT_QUEST, 10
+
+    msgbox PewterCity_Frlg_Text_ButterReceivedPlayer, MSGBOX_DEFAULT
+
+    @ Lance realizes which batch the player received.
+    @ Lorelei turns back toward him for their argument.
+    applymovement LOCALID_PEWTER_LORELEI, PewterCity_Frlg_Movement_LoreleiFacesLance
+    waitmovement LOCALID_PEWTER_LORELEI
+
+    msgbox PewterCity_Frlg_Text_ButterFreshArgument, MSGBOX_DEFAULT
+
+    @ Lorelei returns her attention to the player.
+    applymovement LOCALID_PEWTER_LORELEI, PewterCity_Frlg_Movement_LoreleiFacesPlayer
+    waitmovement LOCALID_PEWTER_LORELEI
+
+    msgbox PewterCity_Frlg_Text_LoreleiOffersRide, MSGBOX_YESNO
+
+    goto_if_eq VAR_RESULT, NO, PewterCity_Frlg_EventScript_LoreleiButter_Stay
+
+    @ Counterpart addresses Lorelei directly.
+    applymovement LOCALID_PEWTER_LORELEI, PewterCity_Frlg_Movement_LoreleiFacesCounterpart
+    applymovement LOCALID_PEWTER_RETURN_COUNTERPART, PewterCity_Frlg_Movement_CounterpartFacesLorelei
+    waitmovement 0
+
+    msgbox PewterCity_Frlg_Text_LoreleiWarp, MSGBOX_DEFAULT
+
+    @ Hide the map transition before state 9 objects disappear.
+    fadescreen FADE_TO_BLACK
+
+    @ Hard Rock Cafe warp 1 is the Pewter-facing entrance at (9,2).
+    warp MAP_HARD_ROCK_CAFE, 9, 3
+    waitstate
+    end
+
+
+PewterCity_Frlg_EventScript_LoreleiButter_Stay:
+    msgbox PewterCity_Frlg_Text_LoreleiStay, MSGBOX_DEFAULT
+    releaseall
+    end
+
+
+PewterCity_Frlg_EventScript_LoreleiButter_RideAgain:
+    msgbox PewterCity_Frlg_Text_LoreleiRideAgain, MSGBOX_YESNO
+    goto_if_eq VAR_RESULT, NO, PewterCity_Frlg_EventScript_LoreleiButter_Stay
+
+    msgbox PewterCity_Frlg_Text_LoreleiWarp, MSGBOX_DEFAULT
+    fadescreen FADE_TO_BLACK
+    warp MAP_HARD_ROCK_CAFE, 9, 3
+    waitstate
+    end
+
+
+PewterCity_Frlg_EventScript_LoreleiButter_NotReady:
+    msgbox PewterCity_Frlg_Text_LoreleiFallback, MSGBOX_DEFAULT
+    releaseall
+    end
+
+
+@ ============================================================================
+@ MOVEMENTS
+@ ============================================================================
+
+PewterCity_Frlg_Movement_ReturnPlayerLooksAtRival:
+    face_left
+    step_end
+
+
+PewterCity_Frlg_Movement_ReturnRivalLooksAtPlayer:
+    face_right
+    step_end
+
+
+PewterCity_Frlg_Movement_PlayerFacesScreen:
+    face_down
+    step_end
+
+PewterCity_Frlg_Movement_PlayerFacesLorelei:
+    face_up
+    step_end
+
+PewterCity_Frlg_Movement_LoreleiFacesPlayer:
+    face_down
+    step_end
+
+PewterCity_Frlg_Movement_LoreleiFacesLance:
+    face_up
+    step_end
+
+
+PewterCity_Frlg_Movement_LanceFacesPlayer:
+    face_down
+    step_end
+
+
+PewterCity_Frlg_Movement_CounterpartFacesPlayer:
+    face_down
+    step_end
+
+PewterCity_Frlg_Movement_LoreleiFacesCounterpart:
+    face_right
+    step_end
+
+PewterCity_Frlg_Movement_CounterpartFacesLorelei:
+    face_left
+    step_end
+
+
+@ ============================================================================
+@ TEXT - FLOWER LANDING
+@ ============================================================================
+
+PewterCity_Frlg_Text_ReturnFlowers:
+    .string "{RIVAL}: ...Flowers.\p"
+    .string "{PLAYER}: You okay?\p"
+    .string "{RIVAL}: He put YOU on the road.\p"
+    .string "{PLAYER}: ...\p"
+    .string "{RIVAL}: He put ME in the flowers.\p"
+    .string "{PLAYER}: Wow.\p"
+    .string "Flowers?\p"
+    .string "Okay, I guess, old guy.$"
+
+
+PewterCity_Frlg_Text_ReturnCounterpartState9:
+    .string "{RIVAL}: I'm fine.\p"
+    .string "The flowers broke my fall.\p"
+    .string "...I think.$"
+
+
+PewterCity_Frlg_Text_ReturnCounterpartFallback:
+    .string "{RIVAL}: We should probably\n"
+    .string "keep moving.$"
+
+
+@ ============================================================================
+@ TEXT - THE BUTTER DEAL
+@ ============================================================================
+
+PewterCity_Frlg_Text_ButterDeal1:
+    .string "LORELEI: Same as usual?\p"
+    .string "LANCE: Two.\p"
+    .string "LORELEI: Two?\p"
+    .string "LANCE: Dragonite likes it.\p"
+    .string "LORELEI: Lance.\p"
+    .string "LANCE: ...They're both mine.$"
+
+
+PewterCity_Frlg_Text_ButterDeal2:
+    .string "LORELEI: I only made a few\n"
+    .string "batches this week.\p"
+    .string "LANCE: I know.\p"
+    .string "LORELEI: That's why everyone\n"
+    .string "keeps asking me for it.$"
+
+
+PewterCity_Frlg_Text_ButterPlayerInterrupts:
+    .string "{PLAYER}: ...Is that butter?\p"
+    .string "LANCE: Yes.\p"
+    .string "{PLAYER}: Why did that feel\n"
+    .string "illegal?\p"
+    .string "LANCE: I don't know what you\n"
+    .string "mean.$"
+
+
+PewterCity_Frlg_Text_ButterBrockReveal:
+    .string "LORELEI: Wait.\p"
+    .string "You're the two Brock sent,\n"
+    .string "aren't you?\p"
+    .string "{PLAYER}: Apparently.\p"
+    .string "LORELEI: He sent you all this\n"
+    .string "way for MY butter?\p"
+    .string "{PLAYER}: ...Yes.\p"
+    .string "LORELEI: He could've just asked.$"
+
+
+PewterCity_Frlg_Text_ButterReceivedPlayer:
+    .string "LORELEI: Here.\p"
+    .string "This batch is fresh.\p"
+    .string "Take it to Brock.$"
+
+PewterCity_Frlg_Text_ButterFreshArgument:
+    .string "LANCE: Wait.\p"
+    .string "THAT one's fresh?\p"
+    .string "LORELEI: Yours is fine.\p"
+    .string "LANCE: Lorelei.\p"
+    .string "LORELEI: It's fine.$"
+
+
+PewterCity_Frlg_Text_LoreleiOffersRide:
+    .string "LORELEI: You're heading back\n"
+    .string "to Brock now, right?\p"
+    .string "I can save you the walk.\p"
+    .string "Want a ride?$"
+
+
+PewterCity_Frlg_Text_LoreleiWarp:
+    .string "{RIVAL}: Please don't say you\n"
+    .string "know an old man.\p"
+    .string "LORELEI: ...What?\p"
+    .string "{RIVAL}: Never mind.\p"
+    .string "LORELEI: Hold still.$"
+
+
+PewterCity_Frlg_Text_LoreleiStay:
+    .string "LORELEI: Fine.\p"
+    .string "Just don't let that butter\n"
+    .string "sit out too long.$"
+
+
+PewterCity_Frlg_Text_LoreleiFallback:
+    .string "LORELEI: Brock better appreciate\n"
+    .string "that batch.$"
+
+
+@ ============================================================================
+@ PEWTER CITY SIGNS
+@ ============================================================================
+
+PewterCity_EventScript_MuseumSign::
+    msgbox PewterCity_Text_MuseumSign, MSGBOX_SIGN
+    end
+
+
+PewterCity_EventScript_PoliceNotice::
+    msgbox PewterCity_Text_PoliceNotice, MSGBOX_SIGN
+    end
+
+
+PewterCity_EventScript_GymSign::
+    msgbox PewterCity_Text_ShrineSign, MSGBOX_SIGN
+    end
+
+
+PewterCity_EventScript_TrainerTips::
+    msgbox PewterCity_Text_TrainerTips, MSGBOX_SIGN
+    end
+
+
+PewterCity_EventScript_CitySign::
+    msgbox PewterCity_Text_CitySign, MSGBOX_SIGN
+    end
+
+
+PewterCity_Text_MuseumSign:
+    .string "PEWTER MUSEUM OF SCIENCE$"
+
+
+PewterCity_Text_PoliceNotice:
+    .string "NOTICE\p"
+    .string "Please respect PEWTER's\n"
+    .string "historic sites and monuments.$"
+
+
+PewterCity_Text_ShrineSign:
+    .string "PEWTER SHRINE\p"
+    .string "KEEPER: BROCK$"
+
+
+PewterCity_Text_TrainerTips:
+    .string "TRAINER TIPS\p"
+    .string "Different POKéMON thrive in\n"
+    .string "different situations.\p"
+    .string "Build a team you can trust.$"
+
+
+PewterCity_Text_CitySign:
+    .string "PEWTER CITY\p"
+    .string "A quiet city built among\n"
+    .string "stone.$"
+
+
+PewterCity_Frlg_Text_LoreleiRideAgain:
+    .string "LORELEI: Change your mind?\p"
+    .string "I can still get you back to\n"
+    .string "Brock if you want.$"

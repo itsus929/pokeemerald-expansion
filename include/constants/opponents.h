@@ -69,7 +69,7 @@
 #define TRAINER_LOLA_4                       62
 #define TRAINER_LOLA_5                       63
 #define TRAINER_RICKY_1                      64
-#define TRAINER_SIMON                        65
+#define TRAINER_SOL_MT_MOON                  65
 #define TRAINER_CHARLIE                      66
 #define TRAINER_RICKY_2                      67
 #define TRAINER_RICKY_3                      68
@@ -857,8 +857,8 @@
 #define TRAINER_EVERETT                     850
 #define TRAINER_RED                         851
 #define TRAINER_LEAF                        852
-#define TRAINER_BRENDAN_PLACEHOLDER         853
-#define TRAINER_MAY_PLACEHOLDER             854
+#define TRAINER_XIE_MT_MOON                  853
+#define TRAINER_BREEDER_GRACE_FALLARBOR     854
 
 // NOTE: Because each Trainer uses a flag to determine when they are defeated, there is only space for 9 additional trainers before trainer flag space overflows
 //       More space can be made by shifting flags around in constants/flags.h or changing how trainer flags are handled
@@ -872,8 +872,9 @@
 #define TRAINER_CERULEAN_ROCKET_GRUNT 860
 #define TRAINER_BREEDER_JOY_DEWFORD 861
 #define TRAINER_BREEDER_HOPE_SLATEPORT 862
+#define TRAINER_BREEDER_FAITH_MAUVILLE 863
 
-#define TRAINERS_COUNT_EMERALD 863
+#define TRAINERS_COUNT_EMERALD 864
 #define MAX_TRAINERS_COUNT_EMERALD 864
 
 #if IS_FRLG

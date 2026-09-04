@@ -265,7 +265,7 @@
 #define FLAG_RECEIVED_TM_ROAR                0xE7
 #define FLAG_RECEIVED_TM_GIGA_DRAIN          0xE8
 
-#define FLAG_UNUSED_0x0E9                    0xE9 // Unused Flag
+#define FLAG_HIDE_HARD_ROCK_PANCAKE_COUNTERPART  0xE9
 
 #define FLAG_RECEIVED_TM_REST                0xEA
 #define FLAG_RECEIVED_TM_ATTRACT             0xEB
@@ -1523,24 +1523,32 @@
 #define FLAG_CERULEAN_GARY_TOUR_ARRIVED            (SYSTEM_FLAGS + 0x90) // Library walk finished; counterpart is with Gary
 #define FLAG_HIDE_FUCHSIA_GARY                     (SYSTEM_FLAGS + 0x91) // Gary leaves after Fuchsia transport
 #define FLAG_ITEM_FUCHSIA_WARDEN_FIRE_STONE        (SYSTEM_FLAGS + 0x92) // Fire Stone in Warden's house
-#define FLAG_UNUSED_0x8F3                           (SYSTEM_FLAGS + 0x93) // Unused Flag
-#define FLAG_UNUSED_0x8F4                           (SYSTEM_FLAGS + 0x94) // Unused Flag
+#define FLAG_HIDE_FUCHSIA_KOGA                           (SYSTEM_FLAGS + 0x93) // Unused Flag
+#define FLAG_RECEIVED_SAFARI_SECRET_HOUSE_REWARD   (SYSTEM_FLAGS + 0x94) // Ability Capsule from Safari Secret House
+#define FLAG_HIDE_MAUVILLE_RETURN_COUNTERPART        (SYSTEM_FLAGS + 0x95)
+
+// Cerulean library disclosure memory.
+// If none are set, the choice predates tracking.
+#define FLAG_CERULEAN_DISCLOSED_EVERYTHING           (SYSTEM_FLAGS + 0x96)
+#define FLAG_CERULEAN_DISCLOSED_BOOK_ONLY            (SYSTEM_FLAGS + 0x97)
+#define FLAG_CERULEAN_DISCLOSED_NOTHING              (SYSTEM_FLAGS + 0x98)
+#define FLAG_RECEIVED_ROUTE117_MIRROR_HERB          (SYSTEM_FLAGS + 0x99) // Free Mirror Herb from Route 117 Day Care
 #define FLAG_UNUSED_0x8F5                           (SYSTEM_FLAGS + 0x95) // Unused Flag
 #define FLAG_UNUSED_0x8F6                           (SYSTEM_FLAGS + 0x96) // Unused Flag
 #define FLAG_UNUSED_0x8F7                           (SYSTEM_FLAGS + 0x97) // Unused Flag
 #define FLAG_UNUSED_0x8F8                           (SYSTEM_FLAGS + 0x98) // Unused Flag
 #define FLAG_UNUSED_0x8F9                           (SYSTEM_FLAGS + 0x99) // Unused Flag
-#define FLAG_UNUSED_0x8FA                           (SYSTEM_FLAGS + 0x9A) // Unused Flag
-#define FLAG_UNUSED_0x8FB                           (SYSTEM_FLAGS + 0x9B) // Unused Flag
-#define FLAG_UNUSED_0x8FC                           (SYSTEM_FLAGS + 0x9C) // Unused Flag
-#define FLAG_UNUSED_0x8FD                           (SYSTEM_FLAGS + 0x9D) // Unused Flag
-#define FLAG_UNUSED_0x8FE                           (SYSTEM_FLAGS + 0x9E) // Unused Flag
-#define FLAG_UNUSED_0x8FF                           (SYSTEM_FLAGS + 0x9F) // Unused Flag
-#define FLAG_UNUSED_0x900                           (SYSTEM_FLAGS + 0xA0) // Unused Flag
-#define FLAG_UNUSED_0x901                           (SYSTEM_FLAGS + 0xA1) // Unused Flag
-#define FLAG_UNUSED_0x902                           (SYSTEM_FLAGS + 0xA2) // Unused Flag
-#define FLAG_UNUSED_0x903                           (SYSTEM_FLAGS + 0xA3) // Unused Flag
-#define FLAG_UNUSED_0x904                           (SYSTEM_FLAGS + 0xA4) // Unused Flag
+#define FLAG_RECEIVED_WALLYS_AUNT_ICE_STONE       (SYSTEM_FLAGS + 0x9A) // Ice Stone from Wally's aunt
+#define FLAG_MT_MOON_BELIEF_BOOK_USED              (SYSTEM_FLAGS + 0x9B) // Mt. Moon belief book reward received
+#define FLAG_HIDE_MT_MOON_TWIN                     (SYSTEM_FLAGS + 0x9C) // Mt. Moon twin scene complete
+#define FLAG_MT_MOON_TWIN_BOOK_INTRO_DONE          (SYSTEM_FLAGS + 0x9D) // Twin told player to read second book
+#define FLAG_MT_MOON_TWIN_BOOK_READ                (SYSTEM_FLAGS + 0x9E) // Player read second Mt. Moon book
+#define FLAG_MT_MOON_BELIEF_SHINY_FIXED             (SYSTEM_FLAGS + 0x9F) // Retroactive shiny fix for original belief gift
+#define FLAG_MT_MOON_OAK_TALKED                    (SYSTEM_FLAGS + 0xA0) // Oak Mt. Moon conversation complete
+#define FLAG_MT_MOON_LORELEI_TALKED                (SYSTEM_FLAGS + 0xA1) // Lorelei Mt. Moon conversation complete
+#define FLAG_HIDE_METEOR_FALLS_COUNTERPART          (SYSTEM_FLAGS + 0xA2) // Mt. Moon return counterpart scene complete
+#define FLAG_EMBER_SPA_COUNTERPART_PENDING          (SYSTEM_FLAGS + 0xA3) // Post-Mt. Chimney Ember Spa scene pending
+#define FLAG_HIDE_EMBER_SPA_COUNTERPART             (SYSTEM_FLAGS + 0xA4) // Hide Ember Spa counterpart
 #define FLAG_UNUSED_0x905                           (SYSTEM_FLAGS + 0xA5) // Unused Flag
 #define FLAG_UNUSED_0x906                           (SYSTEM_FLAGS + 0xA6) // Unused Flag
 #define FLAG_UNUSED_0x907                           (SYSTEM_FLAGS + 0xA7) // Unused Flag

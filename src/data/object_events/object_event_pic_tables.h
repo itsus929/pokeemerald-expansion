@@ -3,6 +3,19 @@ static const struct SpriteFrameImage sPicTable_Dragonite[] = {
     overworld_ascending_frames(gObjectEventPic_DragoniteStatic, 4, 4),
 };
 
+// Giovanni's Alakazam - static story object using existing species OW graphics.
+static const struct SpriteFrameImage sPicTable_Alakazam[] = {
+    overworld_ascending_frames(gObjectEventPic_AlakazamStatic, 4, 4),
+};
+
+static const struct SpriteFrameImage sPicTable_ClefairyMoon[] = {
+    overworld_ascending_frames(gObjectEventPic_ClefairyMoon, 4, 4),
+};
+
+static const struct SpriteFrameImage sPicTable_ImpidimpMoon[] = {
+    overworld_ascending_frames(gObjectEventPic_ImpidimpMoon, 4, 4),
+};
+
 
 static const struct SpriteFrameImage sPicTable_BrendanNormal[] = {
     overworld_ascending_frames(gObjectEventPic_BrendanNormalRunning, 2, 4),

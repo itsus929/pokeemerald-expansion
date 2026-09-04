@@ -1,27 +1,31 @@
 SafariZone_East_Frlg_MapScripts::
-	.byte 0
+    .byte 0
 
-SafariZone_East_EventScript_RestHouseSign::
-	msgbox SafariZone_East_Text_RestHouse, MSGBOX_SIGN
-	end
 
-SafariZone_East_EventScript_TrainerTips::
-	msgbox SafariZone_East_Text_TimeDeclinesOnlyWhileYouWalk, MSGBOX_SIGN
-	end
+SafariZone_East_Frlg_EventScript_BugFan::
+    lock
+    faceplayer
+    msgbox SafariZone_East_Frlg_Text_BugFan, MSGBOX_DEFAULT
+    release
+    end
 
-SafariZone_East_EventScript_AreaSign::
-	msgbox SafariZone_East_Text_AreaSign, MSGBOX_SIGN
-	end
 
-SafariZone_East_Text_RestHouse::
-	.string "REST HOUSE$"
+SafariZone_East_Frlg_EventScript_TaurosWoman::
+    lock
+    faceplayer
+    msgbox SafariZone_East_Frlg_Text_TaurosWoman, MSGBOX_DEFAULT
+    release
+    end
 
-SafariZone_East_Text_TimeDeclinesOnlyWhileYouWalk::
-	.string "TRAINER TIPS\p"
-	.string "The remaining time declines only\n"
-	.string "while you walk.$"
 
-SafariZone_East_Text_AreaSign::
-	.string "AREA 1\n"
-	.string "WEST: CENTER AREA$"
+SafariZone_East_Frlg_Text_BugFan:
+    .string "Scyther or Pinsir?\p"
+    .string "Don't answer too quickly.\n"
+    .string "This says a lot about you.$"
 
+SafariZone_East_Frlg_Text_TaurosWoman:
+    .string "If you see a Tauros...\n"
+    .string "tell it I'm still mad.$"
+
+SafariZone_East_Frlg_Text_TaurosWoman2:
+    .string "It knows what it did.$"

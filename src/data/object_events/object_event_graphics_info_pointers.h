@@ -416,6 +416,9 @@ extern const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_Articuno;
 extern const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_Mewtwo;
 extern const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_Butterfly;
 extern const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_Dragonite;
+extern const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_Alakazam;
+extern const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_ClefairyMoon;
+extern const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_ImpidimpMoon;
 extern const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_Books;
 extern const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_Food;
 extern const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_Entei;
@@ -619,6 +622,9 @@ const struct ObjectEventGraphicsInfo *const gObjectEventGraphicsInfoPointers[NUM
     [OBJ_EVENT_GFX_FOOD] =                     &gObjectEventGraphicsInfo_Food,
     [OBJ_EVENT_GFX_BUTTERFLY] =                &gObjectEventGraphicsInfo_Butterfly,
     [OBJ_EVENT_GFX_DRAGONITE] =                 &gObjectEventGraphicsInfo_Dragonite,
+    [OBJ_EVENT_GFX_ALAKAZAM] =                  &gObjectEventGraphicsInfo_Alakazam,
+    [OBJ_EVENT_GFX_CLEFAIRY_MOON] =             &gObjectEventGraphicsInfo_ClefairyMoon,
+    [OBJ_EVENT_GFX_IMPIDIMP_MOON] =             &gObjectEventGraphicsInfo_ImpidimpMoon,
     [OBJ_EVENT_GFX_CHIKORITA_DOLL] =           &gObjectEventGraphicsInfo_ChikoritaDoll,
     [OBJ_EVENT_GFX_TOTODILE_DOLL] =            &gObjectEventGraphicsInfo_TotodileDoll,
     [OBJ_EVENT_GFX_JIGGLYPUFF_DOLL] =          &gObjectEventGraphicsInfo_JigglypuffDoll,

@@ -1,7 +1,44 @@
 MtChimney_MapScripts::
+        map_script MAP_SCRIPT_ON_LOAD, MtChimney_SetCounterpartGraphics
 	map_script MAP_SCRIPT_ON_RESUME, MtChimney_OnResume
 	map_script MAP_SCRIPT_ON_TRANSITION, MtChimney_OnTransition
 	.byte 0
+
+MtChimney_SetCounterpartGraphics:
+        goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_BRENDAN, MtChimney_SetBrendan
+        goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_MAY, MtChimney_SetMay
+        goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_LEXY, MtChimney_SetLexy
+        goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_JUSTIN, MtChimney_SetJustin
+        goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_MAAM, MtChimney_SetMaam
+        goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_SIR, MtChimney_SetSir
+        goto MtChimney_FinishCounterpartLoad
+
+MtChimney_SetBrendan:
+        setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_BRENDAN_NORMAL
+        goto MtChimney_FinishCounterpartLoad
+
+MtChimney_SetMay:
+        setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_MAY_NORMAL
+        goto MtChimney_FinishCounterpartLoad
+
+MtChimney_SetLexy:
+        setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_LEXY_NORMAL
+        goto MtChimney_FinishCounterpartLoad
+
+MtChimney_SetJustin:
+        setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_JUSTIN_NORMAL
+        goto MtChimney_FinishCounterpartLoad
+
+MtChimney_SetMaam:
+        setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_MAAM_NORMAL
+        goto MtChimney_FinishCounterpartLoad
+
+MtChimney_SetSir:
+        setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_SIR_NORMAL
+
+MtChimney_FinishCounterpartLoad:
+        end
+
 
 MtChimney_OnTransition:
 	setvar VAR_JAGGED_PASS_ASH_WEATHER, 1
@@ -31,47 +68,527 @@ MtChimney_EventScript_ArchieBusyFighting::
 	msgbox MtChimney_Text_ArchieIHaveMyHandsFull, MSGBOX_DEFAULT
 	return
 
+MtChimney_EventScript_SummitTrigger::
+        goto_if_set FLAG_DEFEATED_EVIL_TEAM_MT_CHIMNEY, MtChimney_EventScript_SummitTrigger_End
+        goto MtChimney_EventScript_Maxie
+
+MtChimney_EventScript_SummitTrigger_End:
+        end
+
+
 MtChimney_EventScript_Maxie::
-	lockall
-	playbgm MUS_ENCOUNTER_MAGMA, FALSE
-	msgbox MtChimney_Text_MeteoriteWillActivateVolcano, MSGBOX_DEFAULT
-	applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_FacePlayer
-	waitmovement 0
-	playse SE_PIN
-	applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_ExclamationMark
-	waitmovement 0
-	applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_Delay48
-	waitmovement 0
-	msgbox MtChimney_Text_MaxieIntro, MSGBOX_DEFAULT
-	trainerbattle_no_intro TRAINER_MAXIE_MT_CHIMNEY, MtChimney_Text_MaxieDefeat
-	msgbox MtChimney_Text_MaxieYouHaventSeenLastOfMagma, MSGBOX_DEFAULT
-	closemessage
-	delay 30
-	fadescreenswapbuffers FADE_TO_BLACK
-	removeobject LOCALID_MT_CHIMNEY_MAXIE
-	removeobject LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1
-	removeobject LOCALID_MT_CHIMNEY_TABITHA
-	removeobject LOCALID_MT_CHIMNEY_MAGMA_GRUNT_2
-	setflag FLAG_HIDE_MT_CHIMNEY_TEAM_MAGMA
-	fadescreenswapbuffers FADE_FROM_BLACK
-	setobjectxyperm LOCALID_MT_CHIMNEY_ARCHIE, 10, 12
-	addobject LOCALID_MT_CHIMNEY_ARCHIE
-	call_if_eq VAR_FACING, DIR_EAST, MtChimney_EventScript_ArchieApproachPlayerEast
-	call_if_eq VAR_FACING, DIR_NORTH, MtChimney_EventScript_ArchieApproachPlayerNorth
-	applymovement LOCALID_PLAYER, Common_Movement_WalkInPlaceFasterLeft
-	waitmovement 0
-	msgbox MtChimney_Text_ArchieThankYou, MSGBOX_DEFAULT
-	closemessage
-	call_if_eq VAR_FACING, DIR_EAST, MtChimney_EventScript_ArchieExitEast
-	call_if_eq VAR_FACING, DIR_NORTH, MtChimney_EventScript_ArchieExitNorth
-	removeobject LOCALID_MT_CHIMNEY_ARCHIE
-	setflag FLAG_HIDE_MT_CHIMNEY_TEAM_AQUA
-	setflag FLAG_DEFEATED_EVIL_TEAM_MT_CHIMNEY
-	clearflag FLAG_HIDE_FALLARBOR_HOUSE_PROF_COZMO
-	setflag FLAG_HIDE_METEOR_FALLS_1F_1R_COZMO
-	clearflag FLAG_HIDE_MT_CHIMNEY_LAVA_COOKIE_LADY
-	releaseall
-	end
+        lockall
+        playbgm MUS_ENCOUNTER_MAGMA, FALSE
+
+        @ Initial staging.
+        @ Player is lined up with Giovanni.
+        @ Counterpart is lined up with Maxie.
+
+        msgbox MtChimney_Text_MeteoriteWillActivateVolcano, MSGBOX_DEFAULT
+
+        playse SE_PIN
+        applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_ExclamationMark
+        waitmovement 0
+        applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_Delay48
+        waitmovement 0
+
+        @ Counterpart recognizes Maxie.
+        applymovement LOCALID_MT_CHIMNEY_COUNTERPART, Common_Movement_FaceRight
+        applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_FaceLeft
+        waitmovement 0
+        msgbox MtChimney_Text_FreakOutRecognition, MSGBOX_DEFAULT
+
+        @ Player hears where this is going.
+        applymovement LOCALID_MT_CHIMNEY_COUNTERPART, Common_Movement_FaceDown
+        applymovement LOCALID_PLAYER, Common_Movement_FaceUp
+        waitmovement 0
+        msgbox MtChimney_Text_FreakOutOhNo, MSGBOX_DEFAULT
+
+        @ Counterpart immediately goes back to bothering Maxie.
+        applymovement LOCALID_MT_CHIMNEY_COUNTERPART, Common_Movement_FaceRight
+        applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_FaceLeft
+        waitmovement 0
+        msgbox MtChimney_Text_FreakOutGuy, MSGBOX_DEFAULT
+
+        @ Player joins the chef argument.
+        @ Maxie turns toward the player because now BOTH of them
+        @ are accusing him of terrorizing restaurant staff.
+        applymovement LOCALID_PLAYER, Common_Movement_FaceUp
+        applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_FaceDown
+        waitmovement 0
+        msgbox MtChimney_Text_FreakOutChef, MSGBOX_DEFAULT
+
+        @ Counterpart gets the last word.
+        applymovement LOCALID_MT_CHIMNEY_COUNTERPART, Common_Movement_FaceRight
+        applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_FaceLeft
+        waitmovement 0
+        msgbox MtChimney_Text_FreakOutStillYou, MSGBOX_DEFAULT
+
+        @ Giovanni has had enough.
+        @ Everyone involved in the nonsense looks at him.
+        applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_FaceDown
+        applymovement LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1, Common_Movement_FaceUp
+        waitmovement 0
+        msgbox MtChimney_Text_GiovanniAreWeFinished, MSGBOX_DEFAULT
+
+        @ Counterpart asks PLAYER who Giovanni is.
+        applymovement LOCALID_MT_CHIMNEY_COUNTERPART, Common_Movement_FaceDown
+        applymovement LOCALID_PLAYER, Common_Movement_FaceUp
+        waitmovement 0
+        msgbox MtChimney_Text_CounterpartWhosHe, MSGBOX_DEFAULT
+
+        @ Player has officially had enough.
+        applymovement LOCALID_MT_CHIMNEY_COUNTERPART, Common_Movement_FaceDown
+        applymovement LOCALID_PLAYER, Common_Movement_FaceUp
+        waitmovement 0
+        msgbox MtChimney_Text_PlayerPlease, MSGBOX_DEFAULT
+
+        @ Everybody resets to the actual confrontation.
+
+        @ Maxie closes out the reunion nonsense.
+        @ Maxie and player both look toward counterpart.
+        applymovement LOCALID_PLAYER, Common_Movement_FaceUp
+        applymovement LOCALID_MT_CHIMNEY_COUNTERPART, Common_Movement_FaceRight
+        applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_FaceLeft
+        waitmovement 0
+        msgbox MtChimney_Text_MaxieReunionOver, MSGBOX_DEFAULT
+
+        @ Player cuts in about the meteorite.
+        @ Player faces toward Maxie's side, Maxie turns down to player.
+        applymovement LOCALID_PLAYER, Common_Movement_FaceRight
+        applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_FaceDown
+        waitmovement 0
+        msgbox MtChimney_Text_MaxieMeteorite, MSGBOX_DEFAULT
+
+        @ Giovanni comments directly on MAXIE'S philosophy.
+        @ Counterpart also looks at Maxie for this beat.
+        applymovement LOCALID_MT_CHIMNEY_COUNTERPART, Common_Movement_FaceRight
+        applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_FaceDown
+        applymovement LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1, Common_Movement_FaceUp
+        waitmovement 0
+        msgbox MtChimney_Text_GiovanniDifference, MSGBOX_DEFAULT
+
+        @ Player recognizes Giovanni.
+        applymovement LOCALID_PLAYER, Common_Movement_FaceRight
+        applymovement LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1, Common_Movement_FaceLeft
+        waitmovement 0
+        msgbox MtChimney_Text_PlayerRecognizesGiovanni, MSGBOX_DEFAULT
+
+        @ Counterpart reacts to PLAYER knowing Giovanni.
+        applymovement LOCALID_MT_CHIMNEY_COUNTERPART, Common_Movement_FaceDown
+        applymovement LOCALID_PLAYER, Common_Movement_FaceUp
+        waitmovement 0
+        msgbox MtChimney_Text_CounterpartKnowsGiovanni, MSGBOX_DEFAULT
+
+        @ Player answers counterpart.
+        applymovement LOCALID_MT_CHIMNEY_COUNTERPART, Common_Movement_FaceDown
+        applymovement LOCALID_PLAYER, Common_Movement_FaceUp
+        waitmovement 0
+        msgbox MtChimney_Text_PlayerUnfortunately, MSGBOX_DEFAULT
+
+        @ Both return their attention to Giovanni.
+
+        applymovement LOCALID_PLAYER, Common_Movement_FaceRight
+        applymovement LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1, Common_Movement_FaceLeft
+        waitmovement 0
+        msgbox MtChimney_Text_GiovanniAlliance1, MSGBOX_DEFAULT
+
+        @ Giovanni says their interests overlap.
+        @ Maxie looks toward Giovanni because this concerns him too.
+        applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_FaceDown
+        applymovement LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1, Common_Movement_FaceUp
+        waitmovement 0
+        msgbox MtChimney_Text_GiovanniOverlap, MSGBOX_DEFAULT
+
+        @ Player calls out the Sabrina/Aqua parallel.
+        applymovement LOCALID_PLAYER, Common_Movement_FaceRight
+        applymovement LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1, Common_Movement_FaceLeft
+        waitmovement 0
+        msgbox MtChimney_Text_PlayerSabrinaComparison, MSGBOX_DEFAULT
+
+        @ SABRINA'S PERFECT CLIFF INTERRUPTION.
+        @ Everyone turns because WHO THE HELL INVITED HER.
+        applymovement LOCALID_PLAYER, Common_Movement_FaceUp
+        applymovement LOCALID_MT_CHIMNEY_COUNTERPART, Common_Movement_FaceUp
+        applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_FaceUp
+        applymovement LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1, Common_Movement_FaceUp
+        waitmovement 0
+        msgbox MtChimney_Text_SabrinaCutsIn, MSGBOX_DEFAULT
+
+        @ Back to Giovanni.
+        applymovement LOCALID_PLAYER, Common_Movement_FaceRight
+        applymovement LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1, Common_Movement_FaceLeft
+        waitmovement 0
+        msgbox MtChimney_Text_GiovanniAfterSabrina1, MSGBOX_DEFAULT
+
+        @ Player challenges Giovanni's non-answer.
+        applymovement LOCALID_PLAYER, Common_Movement_FaceRight
+        applymovement LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1, Common_Movement_FaceLeft
+        waitmovement 0
+        msgbox MtChimney_Text_GiovanniAfterSabrina2, MSGBOX_DEFAULT
+
+        @ Maxie is sick of this conversation and addresses Giovanni.
+        applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_FaceDown
+        applymovement LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1, Common_Movement_FaceUp
+        waitmovement 0
+        msgbox MtChimney_Text_MaxieAreWeFinished, MSGBOX_DEFAULT
+
+        @ Giovanni answers Maxie first.
+        applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_FaceDown
+        applymovement LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1, Common_Movement_FaceUp
+        waitmovement 0
+        msgbox MtChimney_Text_GiovanniNotQuite, MSGBOX_DEFAULT
+
+        @ Then Giovanni turns back to the player.
+        applymovement LOCALID_PLAYER, Common_Movement_FaceRight
+        applymovement LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1, Common_Movement_FaceLeft
+        waitmovement 0
+        msgbox MtChimney_Text_GiovanniTest1, MSGBOX_DEFAULT
+
+        @ Player points out the obvious.
+        applymovement LOCALID_PLAYER, Common_Movement_FaceRight
+        applymovement LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1, Common_Movement_FaceLeft
+        waitmovement 0
+        msgbox MtChimney_Text_PlayerJustAsk, MSGBOX_DEFAULT
+
+        @ Giovanni responds directly.
+        applymovement LOCALID_PLAYER, Common_Movement_FaceRight
+        applymovement LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1, Common_Movement_FaceLeft
+        waitmovement 0
+        msgbox MtChimney_Text_GiovanniEvidence, MSGBOX_DEFAULT
+
+        @ Maxie proposes the battle to Giovanni.
+        applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_FaceDown
+        applymovement LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1, Common_Movement_FaceUp
+        waitmovement 0
+        msgbox MtChimney_Text_MaxieSettleIt, MSGBOX_DEFAULT
+
+        @ Giovanni agrees with Maxie.
+        applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_FaceDown
+        applymovement LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1, Common_Movement_FaceUp
+        waitmovement 0
+        msgbox MtChimney_Text_GiovanniAgreed, MSGBOX_DEFAULT
+
+        @ Final challenge is directed at player and counterpart.
+        applymovement LOCALID_MT_CHIMNEY_COUNTERPART, Common_Movement_FaceRight
+        applymovement LOCALID_MT_CHIMNEY_MAXIE, Common_Movement_FaceLeft
+        applymovement LOCALID_PLAYER, Common_Movement_FaceRight
+        applymovement LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1, Common_Movement_FaceLeft
+        waitmovement 0
+        msgbox MtChimney_Text_GiovanniProveWorth, MSGBOX_DEFAULT
+
+        goto MtChimney_EventScript_StartCounterpartMultiBattle
+
+
+MtChimney_EventScript_MultiBattleWon::
+        @ Re-establish the summit positions after battle.
+        turnobject LOCALID_PLAYER, DIR_EAST
+        turnobject LOCALID_MT_CHIMNEY_COUNTERPART, DIR_EAST
+        turnobject LOCALID_MT_CHIMNEY_MAXIE, DIR_WEST
+        turnobject LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1, DIR_WEST
+
+        msgbox MtChimney_Text_SummitVictory, MSGBOX_DEFAULT
+        closemessage
+        delay 30
+
+        @ Maxie, Giovanni, Sabrina, counterpart, and remaining Magma leave.
+        fadescreenswapbuffers FADE_TO_BLACK
+        removeobject LOCALID_MT_CHIMNEY_MAXIE
+        removeobject LOCALID_MT_CHIMNEY_MAGMA_GRUNT_1
+        removeobject LOCALID_MT_CHIMNEY_SABRINA
+        removeobject LOCALID_MT_CHIMNEY_TABITHA
+        removeobject LOCALID_MT_CHIMNEY_MAGMA_GRUNT_2
+        setflag FLAG_HIDE_MT_CHIMNEY_TEAM_MAGMA
+
+        @ Archie must be physically available before we add him.
+        clearflag FLAG_HIDE_MT_CHIMNEY_TEAM_AQUA
+        setobjectxyperm LOCALID_MT_CHIMNEY_ARCHIE, 10, 12
+        addobject LOCALID_MT_CHIMNEY_ARCHIE
+
+        fadescreenswapbuffers FADE_FROM_BLACK
+
+        @ Player is fixed at 10,7 by the summit trigger.
+        @ Archie walks straight up to 10,8.
+        applymovement LOCALID_MT_CHIMNEY_ARCHIE, MtChimney_Movement_ArchieSummitApproach
+        waitmovement LOCALID_MT_CHIMNEY_ARCHIE
+
+
+        applymovement LOCALID_PLAYER, Common_Movement_FaceLeft
+        applymovement LOCALID_MT_CHIMNEY_ARCHIE, Common_Movement_FaceRight
+        waitmovement 0
+
+        msgbox MtChimney_Text_ArchieThankYou, MSGBOX_DEFAULT
+        closemessage
+
+        @ Archie returns down the same safe path.
+        applymovement LOCALID_MT_CHIMNEY_ARCHIE, MtChimney_Movement_ArchieSummitExit
+        waitmovement LOCALID_MT_CHIMNEY_ARCHIE
+        removeobject LOCALID_MT_CHIMNEY_ARCHIE
+
+        removeobject LOCALID_MT_CHIMNEY_SABRINA
+
+        @ Counterpart stayed through Archie and now checks on player.
+        applymovement LOCALID_PLAYER, Common_Movement_FaceUp
+        applymovement LOCALID_MT_CHIMNEY_COUNTERPART, Common_Movement_FaceDown
+        waitmovement 0
+        msgbox MtChimney_Text_CounterpartSummitAftermath, MSGBOX_DEFAULT
+
+        dynmultichoice 0, 0, FALSE, 3, 0, DYN_MULTICHOICE_CB_NONE, MtChimney_Text_ChoiceGramps, MtChimney_Text_ChoicePartWays, MtChimney_Text_ChoiceEmberSpa
+        switch VAR_RESULT
+        case 0, MtChimney_EventScript_AftermathGramps
+        case 1, MtChimney_EventScript_AftermathPartWays
+        case 2, MtChimney_EventScript_AftermathEmberSpa
+        case MULTI_B_PRESSED, MtChimney_EventScript_AftermathPartWays
+        goto MtChimney_EventScript_AftermathPartWays
+
+
+
+MtChimney_EventScript_AftermathGramps::
+        msgbox MtChimney_Text_AftermathGramps, MSGBOX_DEFAULT
+        goto MtChimney_EventScript_CounterpartFinalWalkoff
+
+MtChimney_EventScript_AftermathPartWays::
+        msgbox MtChimney_Text_AftermathPartWays, MSGBOX_DEFAULT
+        goto MtChimney_EventScript_CounterpartFinalWalkoff
+
+MtChimney_EventScript_AftermathEmberSpa::
+        msgbox MtChimney_Text_AftermathEmberSpa, MSGBOX_DEFAULT
+        closemessage
+
+        @ Counterpart will be waiting in Ember Spa.
+        setflag FLAG_EMBER_SPA_COUNTERPART_PENDING
+
+        @ Mt. Chimney arc cleanup.
+        removeobject LOCALID_MT_CHIMNEY_COUNTERPART
+        setflag FLAG_HIDE_MT_CHIMNEY_TEAM_AQUA
+        setflag FLAG_DEFEATED_EVIL_TEAM_MT_CHIMNEY
+        clearflag FLAG_HIDE_FALLARBOR_HOUSE_PROF_COZMO
+        setflag FLAG_HIDE_METEOR_FALLS_1F_1R_COZMO
+        clearflag FLAG_HIDE_MT_CHIMNEY_LAVA_COOKIE_LADY
+
+        @ Enter Ember Spa normally near its doorway.
+        fadescreen FADE_TO_BLACK
+        warp MAP_EMBER_SPA_CUSTOM, 13, 35
+        waitstate
+
+MtChimney_EventScript_CounterpartFinalWalkoff::
+        closemessage
+
+        applymovement LOCALID_MT_CHIMNEY_COUNTERPART, MtChimney_Movement_CounterpartFinalWalkoff
+        waitmovement LOCALID_MT_CHIMNEY_COUNTERPART
+
+        removeobject LOCALID_MT_CHIMNEY_COUNTERPART
+
+        setflag FLAG_HIDE_MT_CHIMNEY_TEAM_AQUA
+        setflag FLAG_DEFEATED_EVIL_TEAM_MT_CHIMNEY
+        clearflag FLAG_HIDE_FALLARBOR_HOUSE_PROF_COZMO
+        setflag FLAG_HIDE_METEOR_FALLS_1F_1R_COZMO
+        clearflag FLAG_HIDE_MT_CHIMNEY_LAVA_COOKIE_LADY
+
+        releaseall
+        end
+
+MtChimney_Movement_CounterpartFinalWalkoff:
+        walk_left
+        walk_left
+        walk_down
+        walk_down
+        walk_down
+        walk_down
+        walk_down
+        walk_down
+        walk_down
+        walk_down
+        walk_down
+        walk_down
+        walk_down
+        walk_down
+        walk_down
+        step_end
+
+MtChimney_Text_ChoiceGramps:
+        .string "Ask about Gramps$"
+
+MtChimney_Text_ChoicePartWays:
+        .string "Part ways for now$"
+
+MtChimney_Text_ChoiceEmberSpa:
+        .string "Go to Ember Spa$"
+
+MtChimney_Text_AftermathGramps:
+        .string "{PLAYER}: Actually...\p"
+        .string "What did you and Gramps talk\n"
+        .string "about?\p"
+        .string "{RIVAL}: Mt. Moon. Mostly.\p"
+        .string "{PLAYER}: Mostly?\p"
+        .string "{RIVAL}: He kept asking what I\n"
+        .string "saw. What I read.\p"
+        .string "Whether anything there felt...\n"
+        .string "different.\p"
+        .string "{PLAYER}: Different how?\p"
+        .string "{RIVAL}: He wouldn't say.\p"
+        .string "{PLAYER}: Of course he wouldn't.\p"
+        .string "{RIVAL}: He did tell me one thing.\p"
+        .string "If I find another place that feels\n"
+        .string "like Mt. Moon...\p"
+        .string "Call him before I touch anything.\p"
+        .string "{PLAYER}: You touched something.\p"
+        .string "{RIVAL}: Immediately.$"
+
+MtChimney_Text_AftermathPartWays:
+        .string "{PLAYER}: I still have some stuff\n"
+        .string "to do.\p"
+        .string "I'll see you eventually.\p"
+        .string "{RIVAL}: Eventually?\p"
+        .string "{PLAYER}: Eventually.\p"
+        .string "{RIVAL}: Good enough for me.$"
+
+MtChimney_Text_AftermathEmberSpa:
+        .string "{PLAYER}: We could go to EMBER SPA.\p"
+        .string "{RIVAL}: The place that apparently\n"
+        .string "just showed up?\p"
+        .string "{PLAYER}: That's the one.\p"
+        .string "{RIVAL}: ...Sure.\p"
+        .string "After today, that barely cracks\n"
+        .string "the top ten weird things.$"
+
+MtChimney_Movement_ArchieSummitApproach:
+        walk_up
+        walk_up
+        walk_up
+        walk_up
+        walk_up
+        walk_right
+        step_end
+
+MtChimney_Movement_ArchieSummitExit:
+        walk_left
+        walk_down
+        walk_down
+        walk_down
+        walk_down
+        walk_down
+        step_end
+
+
+MtChimney_Text_CounterpartSummitAftermath:
+        .string "{RIVAL}: ...So.\p"
+        .string "{PLAYER}: Don't.\p"
+        .string "{RIVAL}: I was just going to say\n"
+        .string "that was a lot.\p"
+        .string "{PLAYER}: That was a lot.\p"
+        .string "{RIVAL}: Freak Out Guy, Giovanni,\n"
+        .string "Sabrina on a cliff...\p"
+        .string "{PLAYER}: Please don't summarize\n"
+        .string "it.\p"
+        .string "{RIVAL}: Fair.\p"
+        .string "{RIVAL}: You good?\p"
+        .string "{PLAYER}: Ask me after we get off\n"
+        .string "this volcano.\p"
+        .string "{RIVAL}: Also fair.\p"
+        .string "{RIVAL}: So, what now?$"
+
+
+MtChimney_EventScript_Counterpart::
+        lock
+        faceplayer
+        msgbox MtChimney_Text_CounterpartDuringBoss, MSGBOX_DEFAULT
+        release
+        end
+
+MtChimney_Movement_CounterpartEntrance:
+        walk_right
+        walk_up
+        walk_right
+        face_right
+        step_end
+
+MtChimney_Text_CounterpartDuringBoss:
+        .string "{RIVAL}: Little busy right now.$"
+
+
+@ MT. CHIMNEY COUNTERPART MULTI BATTLE
+@ ============================================================================
+
+MtChimney_EventScript_StartCounterpartMultiBattle::
+        goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_BRENDAN, MtChimney_EventScript_BattleWithBrendan
+        goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_MAY, MtChimney_EventScript_BattleWithMay
+        goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_LEXY, MtChimney_EventScript_BattleWithLexy
+        goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_JUSTIN, MtChimney_EventScript_BattleWithJustin
+        goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_MAAM, MtChimney_EventScript_BattleWithMaam
+        goto_if_eq VAR_COUNTERPART_ID, COUNTERPART_SIR, MtChimney_EventScript_BattleWithSir
+        goto MtChimney_EventScript_BattleWithLexy
+
+MtChimney_EventScript_BattleWithBrendan::
+        multi_2_vs_2 TRAINER_MAXIE_MT_CHIMNEY, MtChimney_Text_MaxieDefeat, TRAINER_GRUNT_MT_CHIMNEY_1, MtChimney_Text_GiovanniDefeat, PARTNER_BRENDAN
+        goto MtChimney_EventScript_CheckMultiBattleResult
+
+MtChimney_EventScript_BattleWithMay::
+        multi_2_vs_2 TRAINER_MAXIE_MT_CHIMNEY, MtChimney_Text_MaxieDefeat, TRAINER_GRUNT_MT_CHIMNEY_1, MtChimney_Text_GiovanniDefeat, PARTNER_MAY
+        goto MtChimney_EventScript_CheckMultiBattleResult
+
+MtChimney_EventScript_BattleWithLexy::
+        multi_2_vs_2 TRAINER_MAXIE_MT_CHIMNEY, MtChimney_Text_MaxieDefeat, TRAINER_GRUNT_MT_CHIMNEY_1, MtChimney_Text_GiovanniDefeat, PARTNER_CELESTE
+        goto MtChimney_EventScript_CheckMultiBattleResult
+
+MtChimney_EventScript_BattleWithJustin::
+        multi_2_vs_2 TRAINER_MAXIE_MT_CHIMNEY, MtChimney_Text_MaxieDefeat, TRAINER_GRUNT_MT_CHIMNEY_1, MtChimney_Text_GiovanniDefeat, PARTNER_HIIRO
+        goto MtChimney_EventScript_CheckMultiBattleResult
+
+MtChimney_EventScript_BattleWithMaam::
+        multi_2_vs_2 TRAINER_MAXIE_MT_CHIMNEY, MtChimney_Text_MaxieDefeat, TRAINER_GRUNT_MT_CHIMNEY_1, MtChimney_Text_GiovanniDefeat, PARTNER_ALECIYA
+        goto MtChimney_EventScript_CheckMultiBattleResult
+
+MtChimney_EventScript_BattleWithSir::
+        multi_2_vs_2 TRAINER_MAXIE_MT_CHIMNEY, MtChimney_Text_MaxieDefeat, TRAINER_GRUNT_MT_CHIMNEY_1, MtChimney_Text_GiovanniDefeat, PARTNER_ASTER
+        goto MtChimney_EventScript_CheckMultiBattleResult
+
+MtChimney_EventScript_CheckMultiBattleResult::
+        goto_if_eq VAR_RESULT, 1, MtChimney_EventScript_MultiBattleWon
+        fadescreen FADE_TO_BLACK
+        special SetCB2WhiteOut
+        end
+
+
+MtChimney_Text_FreakOutRecognition:
+        .string "{RIVAL}: Hey!\p"
+        .string "MAXIE: ...\p"
+        .string "{RIVAL}: Wait. I know you.\p"
+        .string "You're the guy from Brock's\n"
+        .string "restaurant!$"
+
+MtChimney_Text_FreakOutOhNo:
+        .string "{PLAYER}: Oh no.$"
+
+MtChimney_Text_FreakOutGuy:
+        .string "{RIVAL}: Hey, Freak Out Guy!\p"
+        .string "MAXIE: ...Excuse me?\p"
+        .string "{RIVAL}: You scared the chef.$"
+
+MtChimney_Text_FreakOutChef:
+        .string "MAXIE: I did not scare the chef.\p"
+        .string "{PLAYER}: You absolutely scared\n"
+        .string "the chef.\p"
+        .string "MAXIE: This is hardly relevant.$"
+
+MtChimney_Text_FreakOutStillYou:
+        .string "{RIVAL}: Still you though.\p"
+        .string "MAXIE: ...$"
+
+MtChimney_Text_GiovanniAreWeFinished:
+        .string "GIOVANNI: Are we finished?$"
+
+MtChimney_Text_CounterpartWhosHe:
+        .string "{RIVAL}: Who's he?$"
+
+MtChimney_Text_PlayerPlease:
+        .string "{PLAYER}: PLEASE.$"
+
+
+
+MtChimney_Text_GiovanniDefeat:
+        .string "GIOVANNI: Hm.$"
+
 
 MtChimney_EventScript_ArchieApproachPlayerEast::
 	applymovement LOCALID_MT_CHIMNEY_ARCHIE, MtChimney_Movement_ArchieApproachPlayerEast
@@ -415,9 +932,9 @@ MtChimney_EventScript_Grunt2::
 	msgbox MtChimney_Text_Grunt2PostBattle, MSGBOX_AUTOCLOSE
 	end
 
-MtChimney_EventScript_BusyMagmaGrunt1::
-	msgbox MtChimney_Text_TeamAquaAlwaysMessingWithPlans, MSGBOX_SIGN
-	end
+MtChimney_EventScript_RocketGirl::
+        msgbox MtChimney_Text_RocketGirlOrders, MSGBOX_SIGN
+        end
 
 MtChimney_EventScript_BusyMagmaGrunt2::
 	msgbox MtChimney_Text_MeteoritesPackAmazingPower, MSGBOX_SIGN
@@ -550,46 +1067,128 @@ MtChimney_Text_MeteoriteWillActivateVolcano:
 	.string "the crater and…\l"
 	.string "Fufufu…$"
 
-MtChimney_Text_MaxieIntro:
-	.string "MAXIE: Hm?\n"
-	.string "Who are you?\p"
-	.string "… … … … … …\n"
-	.string "… … … … … …\p"
-	.string "I'd heard ARCHIE bemoaning a child\n"
-	.string "who's been meddling in TEAM AQUA's\l"
-	.string "affairs.\p"
-	.string "It must be you he meant.\p"
-	.string "Humph! So you're thinking of\n"
-	.string "interfering with us, TEAM MAGMA?\p"
-	.string "Now you listen.\n"
-	.string "Long ago, living things used the\l"
-	.string "land to live and grow.\p"
-	.string "That is why land is all important!\n"
-	.string "It is the cradle of all!\p"
-	.string "That is why TEAM MAGMA is dedicated\n"
-	.string "to the expansion of the land mass.\p"
-	.string "It is for further advancement of\n"
-	.string "humankind and POKéMON!\p"
-	.string "And for that, we need the power of\n"
-	.string "what sleeps within this mountain…\p"
-	.string "Oh! There was no need for you to\n"
-	.string "learn that much.\p"
-	.string "But, no matter!\n"
-	.string "I'll teach you the consequences of\l"
-	.string "meddling in our grand design!$"
+MtChimney_Text_MaxieReunionOver:
+        .string "MAXIE: If the reunion is over...$"
+
+MtChimney_Text_MaxieMeteorite:
+        .string "{PLAYER}: You stole the METEORITE.\p"
+        .string "MAXIE: Stole?\p"
+        .string "Such a crude description.\p"
+        .string "Its power is being put toward a\n"
+        .string "far greater purpose.\p"
+        .string "{PLAYER}: By making a volcano\n"
+        .string "erupt?!\p"
+        .string "MAXIE: By advancing our cause.$"
+
+MtChimney_Text_GiovanniDifference:
+        .string "GIOVANNI: And there lies our\n"
+        .string "difference.$"
+
+MtChimney_Text_PlayerRecognizesGiovanni:
+        .string "{PLAYER}: ...Giovanni.$"
+
+MtChimney_Text_CounterpartKnowsGiovanni:
+        .string "{RIVAL}: You know him too?$"
+
+MtChimney_Text_PlayerUnfortunately:
+        .string "{PLAYER}: Unfortunately.$"
+
+MtChimney_Text_GiovanniAlliance1:
+        .string "{PLAYER}: You're working with\n"
+        .string "TEAM MAGMA?\p"
+        .string "GIOVANNI: No.\p"
+        .string "{PLAYER}: No?$"
+
+MtChimney_Text_GiovanniOverlap:
+        .string "GIOVANNI: Our interests happen to\n"
+        .string "overlap.$"
+
+MtChimney_Text_PlayerSabrinaComparison:
+        .string "{PLAYER}: Like Sabrina isn't\n"
+        .string "working with TEAM AQUA?$"
+
+MtChimney_Text_SabrinaCutsIn:
+        .string "SABRINA: Yes.\p"
+        .string "Like Sabrina is not working with\n"
+        .string "TEAM AQUA.\p"
+        .string "{PLAYER}: Sabrin...\p"
+        .string "{PLAYER}: You know what?\p"
+        .string "I'm not even surprised you're\n"
+        .string "just... here.\p"
+        .string "{PLAYER}: Whatever. Anyway...$"
+
+MtChimney_Text_GiovanniAfterSabrina1:
+        .string "GIOVANNI: As I was saying.\p"
+        .string "{PLAYER}: You weren't saying\n"
+        .string "anything.\p"
+        .string "GIOVANNI: Then we're caught up.$"
+
+MtChimney_Text_GiovanniAfterSabrina2:
+        .string "{PLAYER}: That's not an answer.\p"
+        .string "GIOVANNI: You're becoming\n"
+        .string "observant.$"
+
+MtChimney_Text_MaxieAreWeFinished:
+        .string "MAXIE: Are we finished?$"
+
+MtChimney_Text_GiovanniNotQuite:
+        .string "GIOVANNI: Not quite.$"
+
+MtChimney_Text_GiovanniTest1:
+        .string "GIOVANNI: They've come farther\n"
+        .string "than I expected.\p"
+        .string "I would like to know why.$"
+
+MtChimney_Text_PlayerJustAsk:
+        .string "{PLAYER}: You could just ask.$"
+
+MtChimney_Text_GiovanniEvidence:
+        .string "GIOVANNI: I prefer evidence.$"
+
+MtChimney_Text_MaxieSettleIt:
+        .string "MAXIE: Then let us settle this.$"
+
+MtChimney_Text_GiovanniAgreed:
+        .string "GIOVANNI: Agreed.$"
+
+MtChimney_Text_GiovanniProveWorth:
+        .string "GIOVANNI: Prove your worth.$"
 
 MtChimney_Text_MaxieDefeat:
 	.string "What?!\p"
 	.string "I, MAXIE, was caught off guard?!$"
 
-MtChimney_Text_MaxieYouHaventSeenLastOfMagma:
-	.string "MAXIE: But, enough.\n"
-	.string "I will back off this time.\p"
-	.string "But don't think that this is the last\n"
-	.string "you've seen of TEAM MAGMA.\p"
-	.string "Fufufu…\p"
-	.string "Even without the METEORITE, if we\n"
-	.string "obtain that ORB… Fufufu…$"
+MtChimney_Text_SummitVictory:
+        .string "MAXIE: ...Impossible.\p"
+        .string "{RIVAL}: That was AWESOME.\p"
+        .string "{PLAYER}: We almost died.\p"
+        .string "{RIVAL}: Still awesome.\p"
+        .string "GIOVANNI: Hm.\p"
+        .string "{PLAYER}: Don't.\p"
+        .string "GIOVANNI: I said nothing.\p"
+        .string "{PLAYER}: You were about to say\n"
+        .string "interesting.\p"
+        .string "GIOVANNI: Perhaps.\p"
+        .string "MAXIE: Enough!\p"
+        .string "TEAM MAGMA will withdraw for\n"
+        .string "now.\p"
+        .string "But this changes nothing.\p"
+        .string "Even without the METEORITE,\n"
+        .string "our plans continue.\p"
+        .string "The ORB remains.\p"
+        .string "GIOVANNI: On the contrary.\p"
+        .string "It changes one thing.\p"
+        .string "Now I know what they're capable\n"
+        .string "of.\p"
+        .string "{PLAYER}: And what exactly does\n"
+        .string "that mean?\p"
+        .string "GIOVANNI: You'll know when you're\n"
+        .string "able.\p"
+        .string "{PLAYER}: ...I hate when you do\n"
+        .string "that.\p"
+        .string "{RIVAL}: He does that often?\p"
+        .string "{PLAYER}: Unfortunately.$"
+
 
 MtChimney_Text_TabithaIntro:
 	.string "Hehehe!\p"
@@ -851,3 +1450,61 @@ MtChimney_Text_SawyerRematchDefeat:
 MtChimney_Text_SawyerPostRematch:
 	.string "Actually, it really is hot here.\n"
 	.string "I'm overdressed for these parts.$"
+
+@ ============================================================================
+@ CUSTOM MT. CHIMNEY STAGING
+@ ============================================================================
+
+MtChimney_EventScript_Giovanni::
+    lock
+    faceplayer
+    msgbox MtChimney_Text_GiovanniWaiting, MSGBOX_DEFAULT
+    release
+    end
+
+MtChimney_EventScript_Sabrina::
+    lock
+    faceplayer
+    msgbox MtChimney_Text_SabrinaWatching, MSGBOX_DEFAULT
+    release
+    end
+
+MtChimney_EventScript_RocketGrunt::
+    lock
+    faceplayer
+    msgbox MtChimney_Text_RocketGruntOrders, MSGBOX_DEFAULT
+    release
+    end
+
+MtChimney_Text_GiovanniWaiting:
+    .string "GIOVANNI: You've made it this far.\p"
+    .string "Let's see what you do next.$"
+
+MtChimney_Text_SabrinaWatching:
+    .string "SABRINA: ...$"
+
+MtChimney_Text_RocketGruntOrders:
+    .string "We're here on orders.\p"
+    .string "That's all you need to know.$"
+
+
+
+MtChimney_Text_RocketGirlOrders:
+        .string "I was told to stand here.\p"
+        .string "I was not told why.\p"
+        .string "Apparently that part was\n"
+        .string "optional.$"
+
+
+MtChimney_EventScript_FlannerySpaHint::
+        msgbox MtChimney_Text_FlannerySpaHint, MSGBOX_NPC
+        end
+
+MtChimney_Text_FlannerySpaHint:
+        .string "I've lived around here forever.\p"
+        .string "And that place definitely wasn't\n"
+        .string "there before.\p"
+        .string "They call it EMBER SPA?\p"
+        .string "I was skeptical at first...\p"
+        .string "But it's actually pretty cool.\p"
+        .string "You should check it out.$"

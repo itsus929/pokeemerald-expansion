@@ -1,7 +1,24 @@
 FuchsiaCity_Frlg_MapScripts::
+    map_script MAP_SCRIPT_ON_TRANSITION, FuchsiaCity_Frlg_OnTransition
     map_script MAP_SCRIPT_ON_LOAD, FuchsiaCity_Frlg_OnLoad
     map_script MAP_SCRIPT_ON_FRAME_TABLE, FuchsiaCity_Frlg_OnFrame
     .byte 0
+
+
+FuchsiaCity_Frlg_OnTransition:
+    compare VAR_BROCK_INGREDIENT_QUEST, 9
+    goto_if_eq FuchsiaCity_Frlg_OnTransition_AfterKoga
+    end
+
+
+FuchsiaCity_Frlg_OnTransition_AfterKoga:
+    @ Koga is permanently gone once his Fuchsia scene is complete.
+    setflag FLAG_HIDE_FUCHSIA_KOGA
+
+    @ Counterpart stays where the finished Koga scene left them.
+    setobjectxyperm LOCALID_FUCHSIA_COUNTERPART, 35, 22
+    setobjectmovementtype LOCALID_FUCHSIA_COUNTERPART, MOVEMENT_TYPE_FACE_LEFT
+    end
 
 
 FuchsiaCity_Frlg_OnLoad:
@@ -427,9 +444,20 @@ FuchsiaCity_Frlg_EventScript_KogaBattleResolved:
     setvar VAR_BROCK_INGREDIENT_QUEST, 9
 
     msgbox FuchsiaCity_Frlg_Text_KogaLoreleiInfo, MSGBOX_DEFAULT
+    closemessage
+
+    msgbox FuchsiaCity_Frlg_Text_KogaDeparture, MSGBOX_DEFAULT
+    closemessage
+
+    applymovement LOCALID_FUCHSIA_KOGA, FuchsiaCity_Frlg_Movement_KogaLeaves
+    waitmovement 0
+
+    @ His exit has now visibly completed.
+    setflag FLAG_HIDE_FUCHSIA_KOGA
+    removeobject LOCALID_FUCHSIA_KOGA
+
     release
     end
-
 
 FuchsiaCity_Frlg_EventScript_Counterpart::
     lock
@@ -438,10 +466,8 @@ FuchsiaCity_Frlg_EventScript_Counterpart::
     compare VAR_BROCK_INGREDIENT_QUEST, 8
     goto_if_eq FuchsiaCity_Frlg_EventScript_Counterpart_WaitingForKoga
 
-    @ TEMP DEV RESET:
-    @ At state 9, clicking the counterpart replays the entire Fuchsia arrival.
     compare VAR_BROCK_INGREDIENT_QUEST, 9
-    goto_if_eq FuchsiaCity_Frlg_EventScript_DevReset
+    goto_if_eq FuchsiaCity_Frlg_EventScript_Counterpart_AfterKoga
 
     compare VAR_BROCK_INGREDIENT_QUEST, 7
     goto_if_eq FuchsiaCity_Frlg_EventScript_Counterpart_Searching
@@ -457,6 +483,27 @@ FuchsiaCity_Frlg_EventScript_DevReset::
     warp MAP_FUCHSIA_CITY, 43, 21
     waitstate
     end
+
+FuchsiaCity_Frlg_EventScript_ReturnToPewter::
+    lock
+    faceplayer
+    msgbox FuchsiaCity_Frlg_Text_ReturnToPewter, MSGBOX_YESNO
+    goto_if_eq VAR_RESULT, NO, FuchsiaCity_Frlg_EventScript_ReturnToPewter_No
+
+    warp MAP_PEWTER_CITY, 34, 19
+    waitstate
+    end
+
+FuchsiaCity_Frlg_EventScript_ReturnToPewter_No:
+    release
+    end
+
+
+FuchsiaCity_Frlg_EventScript_Counterpart_AfterKoga:
+    msgbox FuchsiaCity_Frlg_Text_CounterpartAfterKoga, MSGBOX_DEFAULT
+    release
+    end
+
 
 FuchsiaCity_Frlg_EventScript_Counterpart_Searching:
     msgbox FuchsiaCity_Frlg_Text_CounterpartSearching, MSGBOX_DEFAULT
@@ -488,6 +535,15 @@ FuchsiaCity_Frlg_Movement_KogaApproaches:
     walk_right
     walk_right
     face_right
+    step_end
+
+
+FuchsiaCity_Frlg_Movement_KogaLeaves:
+    walk_left
+    walk_left
+    walk_left
+    walk_left
+    walk_left
     step_end
 
 
@@ -752,3 +808,150 @@ FuchsiaCity_Frlg_Text_Lass:
     .string "There are POKéMON everywhere,\n"
     .string "half the town smells like grass,\p"
     .string "and somehow it all works.$"
+
+
+FuchsiaCity_Frlg_Text_KogaDeparture:
+    .string "KOGA: Then our business here is\n"
+    .string "concluded.\p"
+    .string "I have matters of my own\n"
+    .string "to attend to.$"
+
+
+FuchsiaCity_Frlg_Text_ReturnToPewter:
+    .string "Heading back to PEWTER CITY?\p"
+    .string "I can get you there.$"
+
+
+FuchsiaCity_Frlg_Text_CounterpartAfterKoga:
+    .string "{RIVAL}: Back to PEWTER, then.\p"
+    .string "At this point, we should start\n"
+    .string "charging for the commute.$"
+
+
+@ ============================================================================
+@ FUCHSIA CITY SIGNS
+@ ============================================================================
+
+FuchsiaCity_EventScript_CitySign::
+    msgbox FuchsiaCity_Text_CitySign, MSGBOX_SIGN
+    end
+
+
+FuchsiaCity_EventScript_SafariZoneSign::
+    msgbox FuchsiaCity_Text_SafariZoneSign, MSGBOX_SIGN
+    end
+
+
+FuchsiaCity_EventScript_GymSign::
+    msgbox FuchsiaCity_Text_GymSign, MSGBOX_SIGN
+    end
+
+
+FuchsiaCity_EventScript_WardensHomeSign::
+    msgbox FuchsiaCity_Text_WardensHomeSign, MSGBOX_SIGN
+    end
+
+
+FuchsiaCity_EventScript_SafariGameSign::
+    msgbox FuchsiaCity_Text_SafariGameSign, MSGBOX_SIGN
+    end
+
+
+@ ============================================================================
+@ SAFARI ZOO / EXHIBIT SIGNS
+@ ============================================================================
+
+FuchsiaCity_EventScript_VoltorbSign::
+    msgbox FuchsiaCity_Text_VoltorbSign, MSGBOX_SIGN
+    end
+
+
+FuchsiaCity_EventScript_SlowpokeSign::
+    msgbox FuchsiaCity_Text_SlowpokeSign, MSGBOX_SIGN
+    end
+
+
+FuchsiaCity_EventScript_ChanseySign::
+    msgbox FuchsiaCity_Text_ChanseySign, MSGBOX_SIGN
+    end
+
+
+FuchsiaCity_EventScript_KangaskhanSign::
+    msgbox FuchsiaCity_Text_KangaskhanSign, MSGBOX_SIGN
+    end
+
+
+FuchsiaCity_EventScript_FossilMonSign::
+    msgbox FuchsiaCity_Text_FossilMonSign, MSGBOX_SIGN
+    end
+
+
+FuchsiaCity_EventScript_LaprasSign::
+    msgbox FuchsiaCity_Text_LaprasSign, MSGBOX_SIGN
+    end
+
+
+@ ============================================================================
+@ TEXT
+@ ============================================================================
+
+FuchsiaCity_Text_CitySign:
+    .string "FUCHSIA CITY\p"
+    .string "Behold! It's Passion Pink!$"
+
+
+FuchsiaCity_Text_SafariZoneSign:
+    .string "POKéMON PARADISE\n"
+    .string "SAFARI ZONE$"
+
+
+FuchsiaCity_Text_GymSign:
+    .string "FUCHSIA CITY POKéMON GYM\p"
+    .string "LEADER: KOGA$"
+
+
+FuchsiaCity_Text_WardensHomeSign:
+    .string "SAFARI ZONE\n"
+    .string "WARDEN'S HOME$"
+
+
+FuchsiaCity_Text_SafariGameSign:
+    .string "SAFARI GAME\p"
+    .string "Catch POKéMON in the\n"
+    .string "SAFARI ZONE!$"
+
+
+FuchsiaCity_Text_VoltorbSign:
+    .string "Name: VOLTORB\p"
+    .string "The very image of a\n"
+    .string "POKé BALL.$"
+
+
+FuchsiaCity_Text_SlowpokeSign:
+    .string "Name: SLOWPOKE\p"
+    .string "Friendly and very slow\n"
+    .string "moving.$"
+
+
+FuchsiaCity_Text_ChanseySign:
+    .string "Name: CHANSEY\p"
+    .string "Catching one is all up\n"
+    .string "to chance.$"
+
+
+FuchsiaCity_Text_KangaskhanSign:
+    .string "Name: KANGASKHAN\p"
+    .string "A maternal POKéMON that\n"
+    .string "raises its young in a pouch.$"
+
+
+FuchsiaCity_Text_FossilMonSign:
+    .string "A POKéMON fossil is\n"
+    .string "on display.$"
+
+
+FuchsiaCity_Text_LaprasSign:
+    .string "Name: LAPRAS\p"
+    .string "A gentle POKéMON that\n"
+    .string "loves crossing the sea.$"
+

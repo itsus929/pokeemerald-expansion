@@ -5,6 +5,7 @@ HardRockCafe_MapScripts::
 @ Temporary map-specific object ID.
 @ Hard Rock Cafe counterpart is object event 5.
 #define LOCALID_HARD_ROCK_COUNTERPART 5
+#define LOCALID_HARD_ROCK_FINALE_COUNTERPART 12
 
 @ ============================================================================
 @ Dynamic counterpart graphics + Blaine setup
@@ -44,9 +45,70 @@ HardRockCafe_SetSir:
     goto HardRockCafe_FinishMapLoad
 
 HardRockCafe_FinishMapLoad:
-    @ Keep Blaine invisible whenever the restaurant loads.
-    @ Replace MAP_HARD_ROCK_CAFE if your generated map constant differs.
+    @ Before the roast finale, keep the original counterpart at
+    @ the pancake table and remove the Brock-side copy.
+    compare VAR_BROCK_INGREDIENT_QUEST, 10
+    goto_if_eq HardRockCafe_LoadRoastFinale
+
+    compare VAR_BROCK_INGREDIENT_QUEST, 11
+    goto_if_eq HardRockCafe_LoadRoastFinale
+
+    removeobject LOCALID_HARD_ROCK_FINALE_COUNTERPART
     end
+
+
+HardRockCafe_LoadRoastFinale:
+    @ Hide the pancake-table copy permanently once the player
+    @ returns with Lorelei's butter.
+    setflag FLAG_HIDE_HARD_ROCK_PANCAKE_COUNTERPART
+    removeobject LOCALID_HARD_ROCK_COUNTERPART
+
+    @ The same dynamic counterpart graphics are used here.
+    setobjectxyperm LOCALID_HARD_ROCK_FINALE_COUNTERPART, 9, 9
+    setobjectmovementtype LOCALID_HARD_ROCK_FINALE_COUNTERPART, MOVEMENT_TYPE_FACE_UP
+    end
+
+@ ============================================================================
+@ BROCK-SIDE COUNTERPART - ROAST FINALE
+@ ============================================================================
+
+HardRockCafe_FinaleCounterpart::
+    lock
+    faceplayer
+
+    compare VAR_BROCK_INGREDIENT_QUEST, 11
+    goto_if_eq HardRockCafe_FinaleCounterpart_After
+
+    msgbox HardRockCafe_Text_FinaleCounterpartBefore, MSGBOX_DEFAULT
+    release
+    end
+
+
+HardRockCafe_FinaleCounterpart_After:
+    msgbox HardRockCafe_Text_FinaleCounterpartAfter, MSGBOX_DEFAULT
+    msgbox HardRockCafe_Text_MauvilleRideOffer, MSGBOX_YESNO
+
+    goto_if_eq VAR_RESULT, NO, HardRockCafe_FinaleCounterpart_Stay
+
+    msgbox HardRockCafe_Text_MauvilleRideYes, MSGBOX_DEFAULT
+
+    @ Counterpart leaves Hard Rock with us.
+    setflag FLAG_HIDE_HARD_ROCK_PANCAKE_COUNTERPART
+    removeobject LOCALID_HARD_ROCK_FINALE_COUNTERPART
+
+    @ Make the Mauville arrival copy visible.
+    clearflag FLAG_HIDE_MAUVILLE_RETURN_COUNTERPART
+
+    warp MAP_MAUVILLE_CITY, 15, 5
+    waitstate
+    end
+
+
+HardRockCafe_FinaleCounterpart_Stay:
+    msgbox HardRockCafe_Text_MauvilleRideNo, MSGBOX_DEFAULT
+    release
+    end
+
 
 @ ============================================================================
 @ First counterpart encounter
@@ -416,7 +478,55 @@ HardRockCafe_BrockIngredientHasItem:
     end
 
 HardRockCafe_BrockIngredientComplete:
-    msgbox HardRockCafe_Text_IngredientComplete, MSGBOX_DEFAULT
+    compare VAR_BROCK_INGREDIENT_QUEST, 10
+    goto_if_eq HardRockCafe_BrockIngredientFinale
+
+    compare VAR_BROCK_INGREDIENT_QUEST, 11
+    goto_if_eq HardRockCafe_BrockIngredientAfterFinale
+
+    @ States 7-9 are still part of the Fuchsia/Pewter search.
+    goto HardRockCafe_BrockIngredientHasItem
+
+
+HardRockCafe_BrockIngredientFinale:
+    msgbox HardRockCafe_Text_ButterDelivered, MSGBOX_DEFAULT
+    msgbox HardRockCafe_Text_RoastFinished, MSGBOX_DEFAULT
+    msgbox HardRockCafe_Text_CounterpartRoast, MSGBOX_DEFAULT
+    msgbox HardRockCafe_Text_LarvitarOffer, MSGBOX_DEFAULT
+
+    givemon SPECIES_LARVITAR, 15
+
+    goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, HardRockCafe_BrockLarvitarParty
+    goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, HardRockCafe_BrockLarvitarPC
+
+    goto HardRockCafe_BrockLarvitarNoRoom
+
+
+HardRockCafe_BrockLarvitarParty:
+    msgbox HardRockCafe_Text_LarvitarParty, MSGBOX_DEFAULT
+    goto HardRockCafe_BrockLarvitarFinish
+
+
+HardRockCafe_BrockLarvitarPC:
+    msgbox HardRockCafe_Text_LarvitarPC, MSGBOX_DEFAULT
+    goto HardRockCafe_BrockLarvitarFinish
+
+
+HardRockCafe_BrockLarvitarNoRoom:
+    msgbox HardRockCafe_Text_LarvitarNoRoom, MSGBOX_DEFAULT
+    release
+    end
+
+
+HardRockCafe_BrockLarvitarFinish:
+    setvar VAR_BROCK_INGREDIENT_QUEST, 11
+    msgbox HardRockCafe_Text_BrockFinalThanks, MSGBOX_DEFAULT
+    release
+    end
+
+
+HardRockCafe_BrockIngredientAfterFinale:
+    msgbox HardRockCafe_Text_BrockAfterFinale, MSGBOX_DEFAULT
     release
     end
 
@@ -995,3 +1105,107 @@ HardRockCafe_Text_IngredientReturnLater:
 HardRockCafe_Text_IngredientComplete:
     .string "BROCK: Now I can finally finish\n"
     .string "the Pewter Rock Roast.$"
+
+
+@ ============================================================================
+@ BROCK INGREDIENT QUEST FINALE
+@ ============================================================================
+
+HardRockCafe_Text_ButterDelivered:
+    .string "BROCK: You're back.\p"
+    .string "...Wait.\p"
+    .string "Is that LORELEI'S butter?\p"
+    .string "You actually got it.\p"
+    .string "She usually makes people ask\n"
+    .string "at least twice.$"
+
+
+HardRockCafe_Text_RoastFinished:
+    .string "BROCK: Perfect.\p"
+    .string "Give me a minute...\p"
+    .string "...\p"
+    .string "There.\p"
+    .string "The PEWTER ROCK ROAST is\n"
+    .string "finally finished.\p"
+    .string "And yes--this part is yours.$"
+
+
+HardRockCafe_Text_CounterpartRoast:
+    .string "{RIVAL}: Finally.\p"
+    .string "We crossed cities for this roast.\p"
+    .string "It better change my life.$"
+
+
+HardRockCafe_Text_LarvitarOffer:
+    .string "BROCK: Ha!\p"
+    .string "Actually... before you go,\n"
+    .string "there's one more thing.\p"
+    .string "You went pretty far out of your\n"
+    .string "way helping me with this.\p"
+    .string "I think you should take care\n"
+    .string "of this little guy.$"
+
+
+HardRockCafe_Text_LarvitarParty:
+    .string "LARVITAR joined your party!$"
+
+
+HardRockCafe_Text_LarvitarPC:
+    .string "Your party is full, so LARVITAR\n"
+    .string "was sent to the PC.$"
+
+
+HardRockCafe_Text_LarvitarNoRoom:
+    .string "BROCK: Hm.\p"
+    .string "Looks like there's no room for\n"
+    .string "LARVITAR right now.\p"
+    .string "Come back after you make some\n"
+    .string "space. I'll keep him here.$"
+
+
+HardRockCafe_Text_BrockFinalThanks:
+    .string "BROCK: Take good care of him.\p"
+    .string "And enjoy the roast.\p"
+    .string "After everything you went through,\n"
+    .string "you definitely earned both.$"
+
+
+HardRockCafe_Text_BrockAfterFinale:
+    .string "BROCK: How's LARVITAR doing?\p"
+    .string "Don't forget--Rock-types can be\n"
+    .string "stubborn.\p"
+    .string "Give them time.$"
+
+
+
+@ ============================================================================
+@ BROCK-SIDE COUNTERPART TEXT
+@ ============================================================================
+
+HardRockCafe_Text_FinaleCounterpartBefore:
+    .string "{RIVAL}: Please tell me that's\n"
+    .string "finally the butter.\p"
+    .string "I have been waiting on this\n"
+    .string "roast forever.$"
+
+
+HardRockCafe_Text_FinaleCounterpartAfter:
+    .string "{RIVAL}: Okay...\p"
+    .string "The roast was worth it.$"
+
+
+HardRockCafe_Text_MauvilleRideOffer:
+    .string "{RIVAL}: He really had us go\n"
+    .string "out of our way for this one.\p"
+    .string "Wanna come back to MAUVILLE\n"
+    .string "with me?$"
+
+
+HardRockCafe_Text_MauvilleRideYes:
+    .string "{RIVAL}: Come on, then.\p"
+    .string "Let's head back.$"
+
+
+HardRockCafe_Text_MauvilleRideNo:
+    .string "{RIVAL}: Okay.\p"
+    .string "I'll be here when you're ready.$"

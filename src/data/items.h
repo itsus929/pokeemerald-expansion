@@ -14894,7 +14894,7 @@ const struct ItemInfo gItemsInfo[] =
     [ITEM_MIRROR_HERB] =
     {
         .name = ITEM_NAME("Mirror Herb"),
-        .price = 30000,
+        .price = 1500,
         .holdEffect = HOLD_EFFECT_MIRROR_HERB,
         .description = COMPOUND_STRING(
             "Mirrors an enemy's\n"

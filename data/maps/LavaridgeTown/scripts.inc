@@ -510,12 +510,12 @@ LavaridgeTown_EventScript_DualAbilityTest::
     getpartysize
     goto_if_eq VAR_RESULT, PARTY_SIZE, LavaridgeTown_EventScript_DualAbilityTestPartyFull
 
-    givemon SPECIES_BRONZOR, 30
+    givemon SPECIES_GROWLITHE, 30
     goto_if_ne VAR_RESULT, MON_GIVEN_TO_PARTY, LavaridgeTown_EventScript_DualAbilityTestPartyFull
 
     call Common_EventScript_GetGiftMonPartySlot
 
-    setvar VAR_RESULT, 1
+    setvar VAR_RESULT, 0
     special SetAbility
 
     msgbox LavaridgeTown_Text_DualAbilityTestReady, MSGBOX_DEFAULT
@@ -539,8 +539,8 @@ LavaridgeTown_Text_DualAbilityTestIntro:
     .string "Want to test something weird?$"
 
 LavaridgeTown_Text_DualAbilityTestReady:
-    .string "Take this BRONZOR.\p"
-    .string "Its selected ABILITY is HEATPROOF.\p"
+    .string "Take this GROWLITHE.\p"
+    .string "Its selected ABILITY is INTIMIDATE.\p"
     .string "Let's see what happens.$"
 
 LavaridgeTown_Text_DualAbilityTestLose:

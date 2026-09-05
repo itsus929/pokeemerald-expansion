@@ -2153,8 +2153,35 @@ u32 NumFaintedBattlersByAttacker(enum BattlerId battlerAtk)
 
 bool32 CanMoveBeBlockedByTarget(struct DamageContext *ctx, s32 movePriority)
 {
-    return CanAbilityAbsorbMove(ctx)
-        || CanTargetBlockPranksterMove(ctx, movePriority)
+    enum Ability primaryAbility = ctx->abilities[ctx->battlerDef];
+    enum Ability secondaryAbility;
+
+    if (CanAbilityAbsorbMove(ctx))
+        return TRUE;
+
+    secondaryAbility = GetBattlerSecondaryAbility(ctx->battlerDef);
+
+    if (secondaryAbility != ABILITY_NONE && secondaryAbility != primaryAbility)
+    {
+        bool32 blocked;
+
+        ctx->abilities[ctx->battlerDef] = secondaryAbility;
+
+        if (ctx->runScript)
+            gBattleScripting.abilityPopupOverwrite = secondaryAbility;
+
+        blocked = CanAbilityAbsorbMove(ctx);
+
+        ctx->abilities[ctx->battlerDef] = primaryAbility;
+
+        if (blocked)
+            return TRUE;
+
+        if (ctx->runScript)
+            gBattleScripting.abilityPopupOverwrite = ABILITY_NONE;
+    }
+
+    return CanTargetBlockPranksterMove(ctx, movePriority)
         || IsPowderMoveBlocked(ctx);
 }
 

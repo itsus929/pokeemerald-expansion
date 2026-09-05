@@ -279,6 +279,28 @@ static bool32 FirstEventBlockEvents(struct BattleCalcValues *calcValues)
             effect = TRUE;
         gBattleStruct->eventState.battlerSwitchIn++;
         break;
+    case FIRST_EVENT_BLOCK_SECONDARY_GENERAL_ABILITIES:
+    {
+        enum Ability secondaryAbility = GetBattlerSecondaryAbility(battler);
+
+        if (secondaryAbility != ABILITY_NONE
+         && secondaryAbility != calcValues->abilities[battler])
+        {
+            gBattleScripting.abilityPopupOverwrite = secondaryAbility;
+
+            if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, battler, secondaryAbility, MOVE_NONE, gBattleStruct->battlerState[battler].switchIn))
+            {
+                effect = TRUE;
+            }
+            else
+            {
+                gBattleScripting.abilityPopupOverwrite = ABILITY_NONE;
+            }
+        }
+
+        gBattleStruct->eventState.battlerSwitchIn++;
+        break;
+    }
     case FIRST_EVENT_BLOCK_IMMUNITY_ABILITIES:
         if (AbilityBattleEffects(ABILITYEFFECT_IMMUNITY, battler, calcValues->abilities[battler], MOVE_NONE, TRUE))
             effect = TRUE;

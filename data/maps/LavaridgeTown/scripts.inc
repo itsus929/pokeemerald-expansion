@@ -515,7 +515,7 @@ LavaridgeTown_EventScript_DualAbilityTest::
 
     call Common_EventScript_GetGiftMonPartySlot
 
-    setvar VAR_RESULT, 0
+    setvar VAR_RESULT, 1
     special SetAbility
 
     msgbox LavaridgeTown_Text_DualAbilityTestReady, MSGBOX_DEFAULT

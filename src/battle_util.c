@@ -4849,6 +4849,46 @@ enum Ability GetBattlerAbility(enum BattlerId battler)
     return GetBattlerAbilityInternal(battler, FALSE, FALSE);
 }
 
+enum Ability GetBattlerSecondaryAbility(enum BattlerId battler)
+{
+    enum Ability secondaryAbility;
+    u32 secondarySlot;
+
+    if (battler >= gBattlersCount)
+        return ABILITY_NONE;
+
+    if (gBattleStruct->battlerState[battler].notOnField
+     || gSpecialStatuses[battler].attackerInParty)
+        return ABILITY_NONE;
+
+    if (gBattleMons[battler].abilityNum == 0)
+        secondarySlot = 1;
+    else
+        secondarySlot = 0;
+
+    secondaryAbility = GetAbilityBySpecies(
+        gBattleMons[battler].species,
+        secondarySlot
+    );
+
+    if (secondaryAbility == ABILITY_NONE
+     || secondaryAbility == gBattleMons[battler].ability)
+        return ABILITY_NONE;
+
+    return secondaryAbility;
+}
+
+
+bool32 BattlerHasAbility(enum BattlerId battler, enum Ability ability)
+{
+    if (ability == ABILITY_NONE)
+        return FALSE;
+
+    return GetBattlerAbility(battler) == ability
+        || GetBattlerSecondaryAbility(battler) == ability;
+}
+
+
 enum Ability GetBattlerAbilityInternal(enum BattlerId battler, bool32 ignoreMoldBreaker, bool32 noAbilityShield)
 {
     bool32 hasAbilityShield = !noAbilityShield && GetBattlerHoldEffectIgnoreAbility(battler) == HOLD_EFFECT_ABILITY_SHIELD;
@@ -8169,12 +8209,17 @@ static inline uq4_12_t CalcTypeEffectivenessMultiplierInternal(struct DamageCont
             modifier = UQ_4_12(0.0);
     }
     else if (ctx->moveType == TYPE_GROUND
-        && !IsBattlerGroundedInverseCheck(ctx->battlerDef, ctx->abilities[ctx->battlerDef], ctx->holdEffects[ctx->battlerDef], INVERSE_BATTLE, ctx->isAnticipation)
+        && !IsBattlerGroundedInverseCheck(
+            ctx->battlerDef,
+            BattlerHasAbility(ctx->battlerDef, ABILITY_LEVITATE) ? ABILITY_LEVITATE : ctx->abilities[ctx->battlerDef],
+            ctx->holdEffects[ctx->battlerDef],
+            INVERSE_BATTLE,
+            ctx->isAnticipation)
         && !(MoveIgnoresTypeIfFlyingAndUngrounded(ctx->move))
         && !(ctx->holdEffects[ctx->battlerDef] == HOLD_EFFECT_RING_TARGET && IS_BATTLER_OF_TYPE(ctx->battlerDef, TYPE_FLYING) && !IsBattlerUngroundedByAbilityItemOrEffect(ctx->battlerDef, ctx->abilities[ctx->battlerDef], ctx->holdEffects[ctx->battlerDef])))
     {
         modifier = UQ_4_12(0.0);
-        if (ctx->updateFlags && ctx->abilities[ctx->battlerDef] == ABILITY_LEVITATE)
+        if (ctx->updateFlags && BattlerHasAbility(ctx->battlerDef, ABILITY_LEVITATE))
         {
             gBattleStruct->moveResultFlags[ctx->battlerDef] |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
             gLastUsedAbility = ABILITY_LEVITATE;

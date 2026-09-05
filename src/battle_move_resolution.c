@@ -2046,7 +2046,8 @@ static enum CancelerResult CancelerTargetFailure(struct BattleCalcValues *cv)
                 gSpecialStatuses[cv->battlerDef].updateStallMons = TRUE;
                 gBattleStruct->moveResultFlags[cv->battlerDef] = MOVE_RESULT_FAILED;
                 gBattlerAbility = cv->battlerDef;
-                RecordAbilityBattle(cv->battlerDef, cv->abilities[cv->battlerDef]);
+                gBattleScripting.abilityPopupOverwrite = gLastUsedAbility;
+                RecordAbilityBattle(cv->battlerDef, gLastUsedAbility);
                 BattleScriptCall(BattleScript_AbilityProtectedTarget);
                 targetAvoidedAttack = TRUE;
             }

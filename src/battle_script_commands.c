@@ -13252,7 +13252,12 @@ void BS_TryInstruct(void)
 void BS_ShowAbilityPopup(void)
 {
     NATIVE_ARGS();
-    CreateAbilityPopUp(gBattlerAbility, gBattleMons[gBattlerAbility].ability, (IsDoubleBattle()) != 0);
+    enum Ability ability = gBattleScripting.abilityPopupOverwrite;
+
+    if (ability == ABILITY_NONE)
+        ability = gBattleMons[gBattlerAbility].ability;
+
+    CreateAbilityPopUp(gBattlerAbility, ability, (IsDoubleBattle()) != 0);
     gBattlescriptCurrInstr = cmd->nextInstr;
 }
 

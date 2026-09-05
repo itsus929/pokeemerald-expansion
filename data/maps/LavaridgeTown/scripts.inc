@@ -499,3 +499,56 @@ LavaridgeTown_Text_TogepiRepairSuccess:
 LavaridgeTown_Text_TogepiRepairFailed:
     .string "Hm... I couldn't find the TOGEPI\n"
     .string "that needs help.$"
+
+LavaridgeTown_EventScript_DualAbilityTest::
+    lock
+    faceplayer
+
+    msgbox LavaridgeTown_Text_DualAbilityTestIntro, MSGBOX_YESNO
+    goto_if_eq VAR_RESULT, NO, LavaridgeTown_EventScript_DualAbilityTestCancel
+
+    getpartysize
+    goto_if_eq VAR_RESULT, PARTY_SIZE, LavaridgeTown_EventScript_DualAbilityTestPartyFull
+
+    givemon SPECIES_BRONZOR, 30
+    goto_if_ne VAR_RESULT, MON_GIVEN_TO_PARTY, LavaridgeTown_EventScript_DualAbilityTestPartyFull
+
+    call Common_EventScript_GetGiftMonPartySlot
+
+    setvar VAR_RESULT, 1
+    special SetAbility
+
+    msgbox LavaridgeTown_Text_DualAbilityTestReady, MSGBOX_DEFAULT
+
+    trainerbattle_single TRAINER_ANABEL, LavaridgeTown_Text_DualAbilityTestLose, LavaridgeTown_Text_DualAbilityTestWin
+
+    releaseall
+    end
+
+LavaridgeTown_EventScript_DualAbilityTestPartyFull:
+    msgbox LavaridgeTown_Text_DualAbilityTestPartyFull, MSGBOX_DEFAULT
+    releaseall
+    end
+
+LavaridgeTown_EventScript_DualAbilityTestCancel:
+    releaseall
+    end
+
+
+LavaridgeTown_Text_DualAbilityTestIntro:
+    .string "Want to test something weird?$"
+
+LavaridgeTown_Text_DualAbilityTestReady:
+    .string "Take this BRONZOR.\p"
+    .string "Its selected ABILITY is HEATPROOF.\p"
+    .string "Let's see what happens.$"
+
+LavaridgeTown_Text_DualAbilityTestLose:
+    .string "Interesting.$"
+
+LavaridgeTown_Text_DualAbilityTestWin:
+    .string "Very interesting.$"
+
+LavaridgeTown_Text_DualAbilityTestPartyFull:
+    .string "You'll need one open spot in your\n"
+    .string "party for this test.$"

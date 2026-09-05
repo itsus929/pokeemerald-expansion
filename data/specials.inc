@@ -647,4 +647,8 @@ gSpecials::
         def_special Script_MakeSelectedMonShiny
         def_special Script_IsSelectedMonMimikyu
         def_special FinalizeCounterpartRelationship
+def_special Script_GetLavaridgeVirtueEggSpecies
+def_special Script_LavaridgeHotSpringsWarmEggs
 
+
+def_special Script_RepairCorruptedLavaridgeTogepi

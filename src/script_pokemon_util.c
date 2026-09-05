@@ -834,147 +834,215 @@ void Script_MakeSelectedMonShiny(void)
 }
 
 
-static bool32 IsSelectedEggForCustomization(void)
+static struct BoxPokemon *GetSelectedEggForCustomization(void)
 {
-    if (gSpecialVar_0x8004 >= PARTY_SIZE)
-        return FALSE;
+    struct BoxPokemon *boxMon = GetSelectedBoxMonFromPcOrParty();
 
-    return GetMonData(
-        &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004],
-        MON_DATA_IS_EGG
-    );
+    if (boxMon == NULL)
+        return NULL;
+
+    if (!GetBoxMonData(boxMon, MON_DATA_IS_EGG))
+        return NULL;
+
+    return boxMon;
 }
 
-void Script_CanCustomizeSelectedEggGender(void)
+void Script_CanCustomizeSelectedEggGender(struct ScriptContext *ctx)
+{
+    gSpecialVar_Result = (GetSelectedEggForCustomization() != NULL);
+}
+
+void Script_SetSelectedMonNature(struct ScriptContext *ctx)
 {
     struct Pokemon *mon;
+    struct BoxPokemon *boxMon;
     enum Species species;
-    u32 malePersonality;
-    u32 femalePersonality;
-    u32 maleGender;
-    u32 femaleGender;
+    u32 nature = gSpecialVar_0x8005;
+    u32 gender;
+    u32 personality;
 
-    if (!IsSelectedEggForCustomization())
+    if (gSpecialVar_0x8004 >= PARTY_SIZE || nature >= NUM_NATURES)
     {
         gSpecialVar_Result = FALSE;
         return;
     }
 
     mon = &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004];
+
+    if (GetMonData(mon, MON_DATA_IS_EGG))
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
     species = GetMonData(mon, MON_DATA_SPECIES);
+    gender = GetMonGender(mon);
 
-    malePersonality = GeneratePersonalityForGender(MON_MALE, species);
-    femalePersonality = GeneratePersonalityForGender(MON_FEMALE, species);
+    personality = GetMonPersonality(
+        species,
+        gender,
+        nature,
+        RANDOM_UNOWN_LETTER
+    );
 
-    maleGender = GetGenderFromSpeciesAndPersonality(species, malePersonality);
-    femaleGender = GetGenderFromSpeciesAndPersonality(species, femalePersonality);
+    Script_RequestEffects(SCREFF_V1 | SCREFF_SAVE);
 
-    gSpecialVar_Result =
-        (maleGender == MON_MALE && femaleGender == MON_FEMALE);
+    boxMon = &mon->box;
+    UpdateMonPersonality(boxMon, personality);
+
+    // Make the effective Nature agree with the new personality Nature.
+    SetMonData(mon, MON_DATA_HIDDEN_NATURE, &nature);
+
+    CalculateMonStats(mon);
+
+    gSpecialVar_Result = TRUE;
 }
 
-void Script_SetSelectedEggNature(void)
+
+void Script_SetSelectedEggNature(struct ScriptContext *ctx)
 {
-    struct Pokemon *mon;
-    enum Species species;
-    u32 personality;
-    u32 oldGender;
-    u32 newGender;
-    u32 isShiny;
+    struct BoxPokemon *boxMon = GetSelectedEggForCustomization();
     u32 nature = gSpecialVar_0x8005;
 
-    if (!IsSelectedEggForCustomization() || nature >= NUM_NATURES)
+    if (boxMon == NULL || nature >= NUM_NATURES)
     {
         gSpecialVar_Result = FALSE;
         return;
     }
 
-    mon = &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004];
-    species = GetMonData(mon, MON_DATA_SPECIES);
-    personality = GetMonData(mon, MON_DATA_PERSONALITY);
-    oldGender = GetGenderFromSpeciesAndPersonality(species, personality);
-    isShiny = GetMonData(mon, MON_DATA_IS_SHINY);
+    Script_RequestEffects(SCREFF_V1 | SCREFF_SAVE);
 
-    ModifyPersonalityForNature(&personality, nature);
+    SetBoxMonData(boxMon, MON_DATA_HIDDEN_NATURE, &nature);
 
-    newGender = GetGenderFromSpeciesAndPersonality(species, personality);
+    gSpecialVar_Result = TRUE;
+}
 
-    // Nature and gender both depend on personality.
-    // If changing Nature crossed the species' gender threshold,
-    // rebuild a personality for the original gender first.
-    if (oldGender != MON_GENDERLESS && newGender != oldGender)
+void Script_SetSelectedEggGender(struct ScriptContext *ctx)
+{
+    struct BoxPokemon *boxMon = GetSelectedEggForCustomization();
+    enum Species species;
+    u32 personality;
+    u32 requestedGender;
+    u32 hiddenNature;
+
+    if (boxMon == NULL)
     {
-        personality = GeneratePersonalityForGender(oldGender, species);
-        ModifyPersonalityForNature(&personality, nature);
+        gSpecialVar_Result = FALSE;
+        return;
+    }
 
-        if (GetGenderFromSpeciesAndPersonality(species, personality) != oldGender)
+    if (gSpecialVar_0x8005 == 0)
+        requestedGender = MON_MALE;
+    else if (gSpecialVar_0x8005 == 1)
+        requestedGender = MON_FEMALE;
+    else
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    species = GetBoxMonData(boxMon, MON_DATA_SPECIES);
+
+    if (gSpeciesInfo[species].genderRatio == MON_MALE
+     || gSpeciesInfo[species].genderRatio == MON_FEMALE
+     || gSpeciesInfo[species].genderRatio == MON_GENDERLESS)
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    // Preserve the effective Nature across the personality change.
+    hiddenNature = GetBoxMonData(boxMon, MON_DATA_HIDDEN_NATURE);
+
+    personality = GetMonPersonality(
+        species,
+        requestedGender,
+        NATURE_RANDOM,
+        RANDOM_UNOWN_LETTER
+    );
+
+    Script_RequestEffects(SCREFF_V1 | SCREFF_SAVE);
+
+    UpdateMonPersonality(boxMon, personality);
+
+    // The hidden Nature modifier depends on personality, so rebuild it
+    // against the new personality while preserving the chosen Nature.
+    SetBoxMonData(boxMon, MON_DATA_HIDDEN_NATURE, &hiddenNature);
+
+    gSpecialVar_Result = TRUE;
+}
+
+
+void Script_SetSelectedEggAbility(struct ScriptContext *ctx)
+{
+    struct BoxPokemon *boxMon = GetSelectedEggForCustomization();
+    enum Species species;
+    u32 requestedMode = gSpecialVar_0x8005;
+    u32 abilityNum;
+    u32 i;
+
+    if (boxMon == NULL)
+    {
+        gSpecialVar_Result = FALSE;
+        return;
+    }
+
+    species = GetBoxMonData(boxMon, MON_DATA_SPECIES);
+
+    if (requestedMode == 0)
+    {
+        // Innate Ability.
+        // Preserve an existing valid normal slot when possible.
+        abilityNum = GetBoxMonData(boxMon, MON_DATA_ABILITY_NUM);
+
+        if (abilityNum >= NUM_NORMAL_ABILITY_SLOTS
+         || GetAbilityBySpecies(species, abilityNum) == ABILITY_NONE)
+        {
+            for (i = 0; i < NUM_NORMAL_ABILITY_SLOTS; i++)
+            {
+                if (GetAbilityBySpecies(species, i) != ABILITY_NONE)
+                {
+                    abilityNum = i;
+                    break;
+                }
+            }
+
+            if (i == NUM_NORMAL_ABILITY_SLOTS)
+            {
+                gSpecialVar_Result = FALSE;
+                return;
+            }
+        }
+    }
+    else if (requestedMode == 1)
+    {
+        // Hidden Ability slot begins immediately after the normal slots.
+        abilityNum = NUM_NORMAL_ABILITY_SLOTS;
+
+        if (GetAbilityBySpecies(species, abilityNum) == ABILITY_NONE)
         {
             gSpecialVar_Result = FALSE;
             return;
         }
     }
-
-    Script_RequestEffects(SCREFF_V1 | SCREFF_SAVE);
-
-    SetMonData(mon, MON_DATA_PERSONALITY, &personality);
-
-    // Preserve the Egg's existing shiny state even though personality changed.
-    SetMonData(mon, MON_DATA_IS_SHINY, &isShiny);
-
-    gSpecialVar_Result = TRUE;
-}
-
-void Script_SetSelectedEggGender(void)
-{
-    struct Pokemon *mon;
-    enum Species species;
-    u32 oldPersonality;
-    u32 newPersonality;
-    u32 oldNature;
-    u32 requestedGender;
-    u32 isShiny;
-
-    if (!IsSelectedEggForCustomization() || gSpecialVar_0x8005 > 1)
-    {
-        gSpecialVar_Result = FALSE;
-        return;
-    }
-
-    mon = &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004];
-    species = GetMonData(mon, MON_DATA_SPECIES);
-
-    requestedGender =
-        (gSpecialVar_0x8005 == 0) ? MON_MALE : MON_FEMALE;
-
-    oldPersonality = GetMonData(mon, MON_DATA_PERSONALITY);
-    oldNature = GetNatureFromPersonality(oldPersonality);
-    isShiny = GetMonData(mon, MON_DATA_IS_SHINY);
-
-    newPersonality = GeneratePersonalityForGender(requestedGender, species);
-    ModifyPersonalityForNature(&newPersonality, oldNature);
-
-    if (GetGenderFromSpeciesAndPersonality(species, newPersonality) != requestedGender)
+    else
     {
         gSpecialVar_Result = FALSE;
         return;
     }
 
     Script_RequestEffects(SCREFF_V1 | SCREFF_SAVE);
-
-    SetMonData(mon, MON_DATA_PERSONALITY, &newPersonality);
-
-    // Preserve shiny state across the personality rewrite.
-    SetMonData(mon, MON_DATA_IS_SHINY, &isShiny);
+    SetBoxMonData(boxMon, MON_DATA_ABILITY_NUM, &abilityNum);
 
     gSpecialVar_Result = TRUE;
 }
 
-void Script_SetSelectedEggBall(void)
+void Script_SetSelectedEggBall(struct ScriptContext *ctx)
 {
-    struct Pokemon *mon;
+    struct BoxPokemon *boxMon = GetSelectedEggForCustomization();
     u32 ball = gSpecialVar_0x8005;
 
-    if (!IsSelectedEggForCustomization())
+    if (boxMon == NULL)
     {
         gSpecialVar_Result = FALSE;
         return;
@@ -990,10 +1058,9 @@ void Script_SetSelectedEggBall(void)
         return;
     }
 
-    mon = &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004];
-
     Script_RequestEffects(SCREFF_V1 | SCREFF_SAVE);
-    SetMonData(mon, MON_DATA_POKEBALL, &ball);
+
+    SetBoxMonData(boxMon, MON_DATA_POKEBALL, &ball);
 
     gSpecialVar_Result = TRUE;
 }
@@ -1127,4 +1194,139 @@ void Script_EvolveSelectedMonByTrade(void)
     gCB2_AfterEvolution = CB2_ReturnToFieldContinueScript;
     BeginEvolutionScene(mon, targetSpecies, canStopEvo, partyIndex);
     ScriptContext_Stop();
+}
+
+
+void Script_GetLavaridgeVirtueEggSpecies(void)
+{
+    enum Species species = SPECIES_WYNAUT;
+    u16 best = 0;
+    u16 value;
+
+    value = VarGet(VAR_COMPASSION);
+    if (value > best)
+    {
+        best = value;
+        species = SPECIES_TOGEPI;
+    }
+
+    value = VarGet(VAR_CURIOSITY);
+    if (value > best)
+    {
+        best = value;
+        species = SPECIES_EEVEE;
+    }
+
+    value = VarGet(VAR_RESOLVE);
+    if (value > best)
+    {
+        best = value;
+        species = SPECIES_RIOLU;
+    }
+
+    value = VarGet(VAR_INDEPENDENCE);
+    if (value > best)
+    {
+        best = value;
+        species = SPECIES_ABSOL;
+    }
+
+    value = VarGet(VAR_WISDOM);
+    if (value > best)
+    {
+        best = value;
+        species = SPECIES_RALTS;
+    }
+
+    value = VarGet(VAR_PERSPECTIVE);
+    if (value > best)
+    {
+        best = value;
+        species = SPECIES_ZORUA;
+    }
+
+    gSpecialVar_Result = species;
+}
+
+void Script_LavaridgeHotSpringsWarmEggs(void)
+{
+    u32 i;
+    u32 eggCycles;
+    u32 warmed = 0;
+
+    for (i = 0; i < gPartiesCount[B_TRAINER_PLAYER]; i++)
+    {
+        if (!GetMonData(&gParties[B_TRAINER_PLAYER][i], MON_DATA_IS_EGG))
+            continue;
+
+        if (GetMonData(&gParties[B_TRAINER_PLAYER][i], MON_DATA_SANITY_IS_BAD_EGG))
+            continue;
+
+        eggCycles = GetMonData(
+            &gParties[B_TRAINER_PLAYER][i],
+            MON_DATA_FRIENDSHIP
+        );
+
+        if (eggCycles <= 1)
+            continue;
+
+        if (eggCycles > 5)
+            eggCycles -= 5;
+        else
+            eggCycles = 1;
+
+        SetMonData(
+            &gParties[B_TRAINER_PLAYER][i],
+            MON_DATA_FRIENDSHIP,
+            &eggCycles
+        );
+
+        warmed++;
+    }
+
+    gSpecialVar_Result = warmed;
+}
+
+
+void Script_RepairCorruptedLavaridgeTogepi(void)
+{
+    u32 i;
+    u32 personality;
+    u32 ball = ITEM_POKE_BALL;
+    struct Pokemon *mon;
+
+    for (i = 0; i < gPartiesCount[B_TRAINER_PLAYER]; i++)
+    {
+        mon = &gParties[B_TRAINER_PLAYER][i];
+
+        if (GetMonData(mon, MON_DATA_SPECIES) != SPECIES_TOGEPI)
+            continue;
+
+        personality = GetMonPersonality(
+            SPECIES_TOGEPI,
+            MON_FEMALE,
+            NATURE_MODEST,
+            RANDOM_UNOWN_LETTER
+        );
+
+        CreateMonWithIVs(
+            mon,
+            SPECIES_TOGEPI,
+            1,
+            personality,
+            OTID_STRUCT_PLAYER_ID,
+            USE_RANDOM_IVS
+        );
+
+        GiveMonInitialMoveset(mon);
+        SetMonData(mon, MON_DATA_POKEBALL, &ball);
+        CalculateMonStats(mon);
+
+        CalculatePlayerPartyCount();
+
+        gSpecialVar_Result = TRUE;
+        return;
+    }
+
+    gSpecialVar_Result = FALSE;
 }

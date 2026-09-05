@@ -2976,6 +2976,47 @@ void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
         boxMon->checksum = CalculateBoxMonChecksumReencrypt(boxMon);
 }
 
+
+void SetMonPersonality(struct Pokemon *mon, u32 personality)
+{
+    struct BoxPokemon *boxMon = &mon->box;
+    union PokemonSubstruct logicalSubstructs[4];
+    u32 oldPersonality = boxMon->personality;
+    u32 i;
+
+    // Decrypt using the OLD personality.
+    if (CalculateBoxMonChecksumDecrypt(boxMon) != boxMon->checksum)
+    {
+        boxMon->isBadEgg = TRUE;
+        boxMon->isEgg = TRUE;
+        GetSubstruct3(boxMon)->isEgg = TRUE;
+        EncryptBoxMon(boxMon);
+        return;
+    }
+
+    // Personality determines the physical order of the four logical
+    // Pokemon substructs. Save each logical block before changing it.
+    for (i = 0; i < 4; i++)
+    {
+        logicalSubstructs[i] =
+            *GetSubstruct(boxMon, oldPersonality, (enum SubstructType)i);
+    }
+
+    // Change personality.
+    boxMon->personality = personality;
+
+    // Rebuild the secure area using the physical ordering required
+    // by the NEW personality.
+    for (i = 0; i < 4; i++)
+    {
+        *GetSubstruct(boxMon, personality, (enum SubstructType)i) =
+            logicalSubstructs[i];
+    }
+
+    // Recalculate checksum and encrypt using the NEW personality.
+    boxMon->checksum = CalculateBoxMonChecksumReencrypt(boxMon);
+}
+
 void CopyMon(void *dest, void *src, size_t size)
 {
     memcpy(dest, src, size);

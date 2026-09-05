@@ -1,6 +1,8 @@
 #ifndef GUARD_SCRIPT_POKEMON_UTIL_H
 #define GUARD_SCRIPT_POKEMON_UTIL_H
 
+struct ScriptContext;
+
 u32 ScriptGiveMon(enum Species species, u8 level, enum Item item);
 u8 ScriptGiveEgg(enum Species species);
 void CreateScriptedWildMon(enum Species species, u8 level, enum Item item);
@@ -23,13 +25,19 @@ void Script_CheckSelectedMonIVTraining(void);
 void Script_TrainSelectedMonIV(void);
 
 
-void Script_CanCustomizeSelectedEggGender(void);
-void Script_SetSelectedEggNature(void);
-void Script_SetSelectedEggGender(void);
-void Script_SetSelectedEggBall(void);
+void Script_CanCustomizeSelectedEggGender(struct ScriptContext *ctx);
+void Script_SetSelectedMonNature(struct ScriptContext *ctx);
+void Script_SetSelectedEggNature(struct ScriptContext *ctx);
+void Script_SetSelectedEggGender(struct ScriptContext *ctx);
+void Script_SetSelectedEggAbility(struct ScriptContext *ctx);
+void Script_SetSelectedEggBall(struct ScriptContext *ctx);
 
 
 void Script_CheckSelectedMonTradeEvolution(void);
 void Script_EvolveSelectedMonByTrade(void);
 
+void Script_GetLavaridgeVirtueEggSpecies(void);
+void Script_LavaridgeHotSpringsWarmEggs(void);
+
+void Script_RepairCorruptedLavaridgeTogepi(void);
 #endif // GUARD_SCRIPT_POKEMON_UTIL_H

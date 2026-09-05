@@ -1030,9 +1030,7 @@ static enum Species DetermineEggSpeciesAndParentSlots(struct DayCare *daycare, u
     u32 i;
     enum Species species[DAYCARE_MON_COUNT];
     enum Species eggSpecies, parentSpecies;
-    bool32 hasMotherEverstone, hasFatherEverstone, motherIsForeign, fatherIsForeign;
     bool32 motherEggSpecies, fatherEggSpecies;
-    u32 currentRegion = GetCurrentRegion();
 
     for (i = 0; i < DAYCARE_MON_COUNT; i++)
     {
@@ -1051,19 +1049,9 @@ static enum Species DetermineEggSpeciesAndParentSlots(struct DayCare *daycare, u
 
     motherEggSpecies = GetEggSpecies(species[parentSlots[0]]);
     fatherEggSpecies = GetEggSpecies(species[parentSlots[1]]);
-    hasMotherEverstone = GetItemHoldEffect(GetBoxMonData(&daycare->mons[parentSlots[0]].mon, MON_DATA_HELD_ITEM)) == HOLD_EFFECT_PREVENT_EVOLVE;
-    hasFatherEverstone = GetItemHoldEffect(GetBoxMonData(&daycare->mons[parentSlots[1]].mon, MON_DATA_HELD_ITEM)) == HOLD_EFFECT_PREVENT_EVOLVE;
-    motherIsForeign = IsSpeciesForeignRegionalForm(motherEggSpecies, currentRegion);
-    fatherIsForeign = IsSpeciesForeignRegionalForm(fatherEggSpecies, currentRegion);
-
-    if (hasMotherEverstone)
-        parentSpecies = motherEggSpecies;
-    else if (fatherIsForeign && hasFatherEverstone)
-        parentSpecies = fatherEggSpecies;
-    else if (motherIsForeign)
-        parentSpecies = GetRegionalFormByRegion(motherEggSpecies, currentRegion);
-    else
-        parentSpecies = motherEggSpecies;
+    // Preserve the regional form of the Pokémon producing the Egg.
+    // Regional forms breed true without requiring an Everstone.
+    parentSpecies = motherEggSpecies;
 
     eggSpecies = GetEggSpecies(parentSpecies);
 
@@ -1196,8 +1184,8 @@ static bool8 TryProduceOrHatchEgg(struct DayCare *daycare)
             daycare->mons[i].steps++, validEggs++;
     }
 
-    // Check if an egg should be produced
-    if (daycare->offspringPersonality == 0 && validEggs == DAYCARE_MON_COUNT && (daycare->mons[1].steps & 0xFF) == 0xFF)
+    // Check if an egg should be produced every 64 steps.
+    if (daycare->offspringPersonality == 0 && validEggs == DAYCARE_MON_COUNT && (daycare->mons[1].steps & 0x3F) == 0x3F)
     {
         u8 compatibility = ModifyBreedingScoreForOvalCharm(GetDaycareCompatibilityScore(daycare));
         if (compatibility > (Random() * 100u) / USHRT_MAX)

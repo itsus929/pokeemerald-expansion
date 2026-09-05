@@ -128,10 +128,11 @@ Route117_PokemonDayCare_EventScript_NotAnEgg::
 
 Route117_PokemonDayCare_EventScript_EggCustomizeMenu::
         msgbox Route117_PokemonDayCare_Text_CustomizeWhat, MSGBOX_DEFAULT
-        dynmultichoice 0, 0, FALSE, 3, 0, DYN_MULTICHOICE_CB_NONE, Route117_PokemonDayCare_Text_CustomNature, Route117_PokemonDayCare_Text_CustomGender, Route117_PokemonDayCare_Text_CustomBall, Route117_PokemonDayCare_Text_CustomBack
-        goto_if_eq VAR_RESULT, 0, Route117_PokemonDayCare_EventScript_NatureMenu
-        goto_if_eq VAR_RESULT, 1, Route117_PokemonDayCare_EventScript_GenderMenu
-        goto_if_eq VAR_RESULT, 2, Route117_PokemonDayCare_EventScript_BallMenu
+        dynmultichoice 0, 0, FALSE, 3, 0, DYN_MULTICHOICE_CB_NONE, Route117_PokemonDayCare_Text_CustomGender, Route117_PokemonDayCare_Text_CustomBall, Route117_PokemonDayCare_Text_CustomAbility, Route117_PokemonDayCare_Text_CustomBack
+        goto_if_eq VAR_RESULT, 0, Route117_PokemonDayCare_EventScript_GenderMenu
+        goto_if_eq VAR_RESULT, 1, Route117_PokemonDayCare_EventScript_BallMenu
+        goto_if_eq VAR_RESULT, 2, Route117_PokemonDayCare_EventScript_AbilityMenu
+        goto_if_eq VAR_TEMP_2, 1, Route117_PokemonDayCare_EventScript_LavaridgeEggSisterExit
         goto Route117_PokemonDayCare_EventScript_EggMoveServices
         end
 
@@ -182,14 +183,47 @@ Route117_PokemonDayCare_EventScript_BuyNature::
         goto_if_eq VAR_RESULT, NO, Route117_PokemonDayCare_EventScript_CancelPaidCustomization
         checkmoney 5000
         goto_if_eq VAR_RESULT, FALSE, Route117_PokemonDayCare_EventScript_CustomizationNoMoney
+        callnative Script_SetSelectedEggNature
+        goto_if_eq VAR_RESULT, FALSE, Route117_PokemonDayCare_EventScript_CustomizationFailed
         playse SE_SHOP
         removemoney 5000
         updatemoneybox
         waitse
-        callnative Script_SetSelectedEggNature
-        goto_if_eq VAR_RESULT, FALSE, Route117_PokemonDayCare_EventScript_CustomizationFailed
         hidemoneybox
         msgbox Route117_PokemonDayCare_Text_NatureDone, MSGBOX_DEFAULT
+        goto Route117_PokemonDayCare_EventScript_EggCustomizeMenu
+        end
+
+@ ------------------------------------------------------------
+@ ABILITY
+@ ------------------------------------------------------------
+
+Route117_PokemonDayCare_EventScript_AbilityMenu::
+        msgbox Route117_PokemonDayCare_Text_ChooseAbility, MSGBOX_DEFAULT
+        dynmultichoice 0, 0, FALSE, 2, 0, DYN_MULTICHOICE_CB_NONE, Route117_PokemonDayCare_Text_AbilityInnate, Route117_PokemonDayCare_Text_AbilityHidden, Route117_PokemonDayCare_Text_CustomBack
+        goto_if_eq VAR_RESULT, MULTI_B_PRESSED, Route117_PokemonDayCare_EventScript_EggCustomizeMenu
+        goto_if_eq VAR_RESULT, 2, Route117_PokemonDayCare_EventScript_EggCustomizeMenu
+        copyvar VAR_0x8005, VAR_RESULT
+
+        showmoneybox 0, 0
+        msgbox Route117_PokemonDayCare_Text_AbilityPrice, MSGBOX_YESNO
+        goto_if_eq VAR_RESULT, NO, Route117_PokemonDayCare_EventScript_CancelPaidCustomization
+        checkmoney 5000
+        goto_if_eq VAR_RESULT, FALSE, Route117_PokemonDayCare_EventScript_CustomizationNoMoney
+        callnative Script_SetSelectedEggAbility
+        goto_if_eq VAR_RESULT, FALSE, Route117_PokemonDayCare_EventScript_AbilityUnavailable
+        playse SE_SHOP
+        removemoney 5000
+        updatemoneybox
+        waitse
+        hidemoneybox
+        msgbox Route117_PokemonDayCare_Text_AbilityDone, MSGBOX_DEFAULT
+        goto Route117_PokemonDayCare_EventScript_EggCustomizeMenu
+        end
+
+Route117_PokemonDayCare_EventScript_AbilityUnavailable::
+        hidemoneybox
+        msgbox Route117_PokemonDayCare_Text_AbilityUnavailable, MSGBOX_DEFAULT
         goto Route117_PokemonDayCare_EventScript_EggCustomizeMenu
         end
 
@@ -212,12 +246,12 @@ Route117_PokemonDayCare_EventScript_GenderMenu::
         goto_if_eq VAR_RESULT, NO, Route117_PokemonDayCare_EventScript_CancelPaidCustomization
         checkmoney 5000
         goto_if_eq VAR_RESULT, FALSE, Route117_PokemonDayCare_EventScript_CustomizationNoMoney
+        callnative Script_SetSelectedEggGender
+        goto_if_eq VAR_RESULT, FALSE, Route117_PokemonDayCare_EventScript_CustomizationFailed
         playse SE_SHOP
         removemoney 5000
         updatemoneybox
         waitse
-        callnative Script_SetSelectedEggGender
-        goto_if_eq VAR_RESULT, FALSE, Route117_PokemonDayCare_EventScript_CustomizationFailed
         hidemoneybox
         msgbox Route117_PokemonDayCare_Text_GenderDone, MSGBOX_DEFAULT
         goto Route117_PokemonDayCare_EventScript_EggCustomizeMenu
@@ -287,6 +321,12 @@ Route117_PokemonDayCare_EventScript_BallMenu::
 @ SHARED PURCHASE RESULTS
 @ ------------------------------------------------------------
 
+Route117_PokemonDayCare_EventScript_LavaridgeEggSisterExit::
+        setvar VAR_TEMP_2, 0
+        msgbox Route117_PokemonDayCare_Text_LavaridgeEggSisterBye, MSGBOX_DEFAULT
+        releaseall
+        end
+
 Route117_PokemonDayCare_EventScript_CancelPaidCustomization::
         hidemoneybox
         goto Route117_PokemonDayCare_EventScript_EggCustomizeMenu
@@ -307,6 +347,11 @@ Route117_PokemonDayCare_EventScript_CustomizationFailed::
 @ ============================================================
 @ TEXT
 @ ============================================================
+
+Route117_PokemonDayCare_Text_LavaridgeEggSisterBye:
+        .string "All right.\p"
+        .string "Come see me anytime before your\n"
+        .string "EGG hatches.$"
 
 Route117_PokemonDayCare_Text_EggMoveIntro:
         .string "I study how POKéMON learn moves\n"
@@ -408,8 +453,8 @@ Route117_PokemonDayCare_Text_NotAnEgg:
 Route117_PokemonDayCare_Text_CustomizeWhat:
         .string "What would you like to customize?$"
 
-Route117_PokemonDayCare_Text_CustomNature:
-        .string "Nature$"
+Route117_PokemonDayCare_Text_CustomAbility:
+        .string "Ability$"
 
 Route117_PokemonDayCare_Text_CustomGender:
         .string "Gender$"
@@ -431,6 +476,27 @@ Route117_PokemonDayCare_Text_NaturePrice:
 Route117_PokemonDayCare_Text_NatureDone:
         .string "Done.\p"
         .string "Its Nature is all set.$"
+
+Route117_PokemonDayCare_Text_ChooseAbility:
+        .string "Choose the Ability type you want.$"
+
+Route117_PokemonDayCare_Text_AbilityInnate:
+        .string "Innate Ability$"
+
+Route117_PokemonDayCare_Text_AbilityHidden:
+        .string "Hidden Ability$"
+
+Route117_PokemonDayCare_Text_AbilityPrice:
+        .string "Ability customization costs\n"
+        .string "5,000. Is that okay?$"
+
+Route117_PokemonDayCare_Text_AbilityDone:
+        .string "Done.\p"
+        .string "Its Ability is all set.$"
+
+Route117_PokemonDayCare_Text_AbilityUnavailable:
+        .string "That Ability type is not available\n"
+        .string "for this species.$"
 
 Route117_PokemonDayCare_Text_ChooseGender:
         .string "Choose the gender you want.\p"

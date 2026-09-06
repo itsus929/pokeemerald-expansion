@@ -4729,7 +4729,10 @@ u32 AbilityBattleEffects(enum AbilityEffect caseID, enum BattlerId battler, enum
         }
         break;
     case ABILITYEFFECT_ON_WEATHER: // For ability effects that activate when the battle weather changes.
-        gLastUsedAbility = GetBattlerAbility(battler);
+        gLastUsedAbility = ability;
+        if (gLastUsedAbility == ABILITY_NONE)
+            gLastUsedAbility = GetBattlerAbility(battler);
+
         switch (gLastUsedAbility)
         {
         case ABILITY_FORECAST:
@@ -4773,7 +4776,10 @@ u32 AbilityBattleEffects(enum AbilityEffect caseID, enum BattlerId battler, enum
         }
         break;
     case ABILITYEFFECT_ON_TERRAIN:  // For ability effects that activate when the field terrain changes.
-        gLastUsedAbility = GetBattlerAbility(battler);
+        gLastUsedAbility = ability;
+        if (gLastUsedAbility == ABILITY_NONE)
+            gLastUsedAbility = GetBattlerAbility(battler);
+
         switch (gLastUsedAbility)
         {
         case ABILITY_MIMICRY:

@@ -508,20 +508,34 @@ LavaridgeTown_EventScript_DualAbilityTest::
     goto_if_eq VAR_RESULT, NO, LavaridgeTown_EventScript_DualAbilityTestCancel
 
     getpartysize
+    goto_if_eq VAR_RESULT, 5, LavaridgeTown_EventScript_DualAbilityTestPartyFull
     goto_if_eq VAR_RESULT, PARTY_SIZE, LavaridgeTown_EventScript_DualAbilityTestPartyFull
 
-    givemon SPECIES_GROWLITHE, 30
+    givemon SPECIES_EEVEE, 30
+    goto_if_ne VAR_RESULT, MON_GIVEN_TO_PARTY, LavaridgeTown_EventScript_DualAbilityTestPartyFull
+
+    call Common_EventScript_GetGiftMonPartySlot
+    special DamageDualAbilityTestPartner
+
+    setvar VAR_0x8005, 0
+    special MoveDualAbilityTestMonToSlot
+
+    givemon SPECIES_POLTCHAGEIST, 30
     goto_if_ne VAR_RESULT, MON_GIVEN_TO_PARTY, LavaridgeTown_EventScript_DualAbilityTestPartyFull
 
     call Common_EventScript_GetGiftMonPartySlot
 
-    setvar VAR_RESULT, 1
+    setvar VAR_RESULT, 2
     special SetAbility
+
+    setvar VAR_0x8005, 1
+    special MoveDualAbilityTestMonToSlot
 
     msgbox LavaridgeTown_Text_DualAbilityTestReady, MSGBOX_DEFAULT
 
-    trainerbattle_single TRAINER_ANABEL, LavaridgeTown_Text_DualAbilityTestLose, LavaridgeTown_Text_DualAbilityTestWin
+    trainerbattle_double TRAINER_ANABEL, LavaridgeTown_Text_DualAbilityTestIntroBattle, LavaridgeTown_Text_DualAbilityTestLose, LavaridgeTown_Text_DualAbilityTestNotEnoughMons
 
+    msgbox LavaridgeTown_Text_DualAbilityTestWin, MSGBOX_DEFAULT
     releaseall
     end
 
@@ -539,9 +553,12 @@ LavaridgeTown_Text_DualAbilityTestIntro:
     .string "Want to test something weird?$"
 
 LavaridgeTown_Text_DualAbilityTestReady:
-    .string "Take this GROWLITHE.\p"
-    .string "Its selected ABILITY is INTIMIDATE.\p"
+    .string "Take these two POKéMON.\p"
+    .string "POLTCHAGEIST has HEATPROOF.\p"
     .string "Let's see what happens.$"
+
+LavaridgeTown_Text_DualAbilityTestIntroBattle:
+    .string "Let's test it.$"
 
 LavaridgeTown_Text_DualAbilityTestLose:
     .string "Interesting.$"
@@ -549,6 +566,10 @@ LavaridgeTown_Text_DualAbilityTestLose:
 LavaridgeTown_Text_DualAbilityTestWin:
     .string "Very interesting.$"
 
+LavaridgeTown_Text_DualAbilityTestNotEnoughMons:
+    .string "You'll need two POKéMON that can\n"
+    .string "battle.$"
+
 LavaridgeTown_Text_DualAbilityTestPartyFull:
-    .string "You'll need one open spot in your\n"
+    .string "You'll need two open spots in your\n"
     .string "party for this test.$"

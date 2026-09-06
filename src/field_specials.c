@@ -4600,6 +4600,44 @@ void SetAbility(void)
     SetMonData(&gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004], MON_DATA_ABILITY_NUM, &ability);
 }
 
+void DamageDualAbilityTestPartner(void)
+{
+    struct Pokemon *mon;
+    u32 maxHp;
+    u32 hp;
+
+    if (gSpecialVar_0x8004 >= PARTY_SIZE)
+        return;
+
+    mon = &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004];
+    maxHp = GetMonData(mon, MON_DATA_MAX_HP);
+
+    if (maxHp <= 1)
+        return;
+
+    hp = maxHp / 2;
+    if (hp == 0)
+        hp = 1;
+
+    SetMonData(mon, MON_DATA_HP, &hp);
+}
+
+void MoveDualAbilityTestMonToSlot(void)
+{
+    u32 source = gSpecialVar_0x8004;
+    u32 target = gSpecialVar_0x8005;
+    struct Pokemon temp;
+
+    if (source >= PARTY_SIZE || target >= PARTY_SIZE || source == target)
+        return;
+
+    temp = gParties[B_TRAINER_PLAYER][target];
+    gParties[B_TRAINER_PLAYER][target] = gParties[B_TRAINER_PLAYER][source];
+    gParties[B_TRAINER_PLAYER][source] = temp;
+
+    gSpecialVar_0x8004 = target;
+}
+
 void DaisyMassageServices(void)
 {
     AdjustFriendship(&gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004], FRIENDSHIP_EVENT_MASSAGE);

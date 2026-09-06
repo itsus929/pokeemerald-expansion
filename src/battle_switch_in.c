@@ -437,6 +437,28 @@ static bool32 SecondEventBlockEvents(struct BattleCalcValues *calcValues)
             effect = TRUE;
         gBattleStruct->eventState.battlerSwitchIn++;
         break;
+    case SECOND_EVENT_SECONDARY_ALLY_ABILITIES:
+    {
+        enum Ability secondaryAbility = GetBattlerSecondaryAbility(battler);
+
+        if (secondaryAbility != ABILITY_NONE
+         && secondaryAbility != calcValues->abilities[battler])
+        {
+            gBattleScripting.abilityPopupOverwrite = secondaryAbility;
+
+            if (AbilityBattleEffects(ABILITYEFFECT_DEPENDS_ON_ALLY, battler, secondaryAbility, MOVE_NONE, gBattleStruct->battlerState[battler].switchIn))
+            {
+                effect = TRUE;
+            }
+            else
+            {
+                gBattleScripting.abilityPopupOverwrite = ABILITY_NONE;
+            }
+        }
+
+        gBattleStruct->eventState.battlerSwitchIn++;
+        break;
+    }
     case SECOND_EVENT_BOOSTER_ENERGY:
         if (ItemBattleEffects(battler, 0, calcValues->holdEffects[battler], IsBoosterEnergyActivation))
             effect = TRUE;

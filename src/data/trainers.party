@@ -16052,13 +16052,18 @@ Class: Salon Maiden
 Pic: Salon Maiden Anabel
 Gender: Female
 Music: Male
-Double Battle: No
+Double Battle: Yes
 AI: Basic Trainer
 
 Geodude
 Level: 30
 IVs: 0 HP / 0 Atk / 0 Def / 0 SpA / 0 SpD / 0 Spe
-- Ember
+- Tackle
+
+Geodude
+Level: 30
+IVs: 0 HP / 0 Atk / 0 Def / 0 SpA / 0 SpD / 0 Spe
+- Tackle
 
 === TRAINER_TUCKER ===
 Name: TUCKER
